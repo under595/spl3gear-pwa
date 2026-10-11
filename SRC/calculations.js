@@ -108,6 +108,40 @@
     "InkRecoverStop_WeaponWideSwingParam",
     "InkRecoverStop_WeaponVerticalSwingParam",
   ];
+  const MAIN_RANGE_LINES = {
+    "4Kスコープ": 6.5, "4Kスコープカスタム": 6.5,
+    "リッター4K": 6.2, "リッター4Kカスタム": 6.2,
+    "R-PEN/5H": 5.7, "R-PEN/5B": 5.7,
+    "スプラスコープ": 5.5, "スプラスコープコラボ": 5.5,
+    "スプラチャージャー": 5.2, "スプラチャージャーコラボ": 5.2, "オーダーチャージャーレプリカ": 5.2,
+    "トライストリンガー": 5.1, "トライストリンガーコラボ": 5.1, "オーダーストリンガーレプリカ": 5.1,
+    "オーバーフロッシャー": 5.0, "オーバーフロッシャーデコ": 5.0,
+    "フルイドⅤ": 4.8, "フルイドⅤカスタム": 4.8,
+    "ジムワイパー": 4.5, "ジムワイパー・ヒュー": 4.5, "ジムワイパーヒュー": 4.5, "オーダーワイパーレプリカ": 4.5,
+    "ソイチューバー": 4.2, "ソイチューバーカスタム": 4.2,
+    "エクスプロッシャー": 4.1, "エクスプロッシャーカスタム": 4.1, "ジェットスイーパー": 4.1, "ジェットスイーパーカスタム": 4.1,
+    "ハイドラント": 4.0, "ハイドラントカスタム": 4.0, "クーゲルシュライバー": 4.0, "クーゲルシュライバー・ヒュー": 4.0, "クーゲルシュライバーヒュー": 4.0, "14式竹筒銃・甲": 4.0, "14式竹筒銃・乙": 4.0,
+    "バレルスピナー": 3.8, "バレルスピナーデコ": 3.8, "オーダースピナーレプリカ": 3.8,
+    "スクイックリンα": 3.7, "スクイックリンβ": 3.7, "ガエンFF": 3.7, "ガエンFFカスタム": 3.7,
+    "ドライブワイパー": 3.5, "ドライブワイパーデコ": 3.5, "Rブラスターエリート": 3.5, "Rブラスターエリートデコ": 3.5, "LACT450": 3.5, "LACT-450": 3.5, "LACT-450デコ": 3.5,
+    "ボトルガイザー": 3.4, "ボトルガイザーフォイル": 3.4,
+    "イグザミナー": 3.3, "イグザミナー・ヒュー": 3.3, "イグザミナーヒュー": 3.3, "デンタルワイパーミント": 3.3, "デンタルワイパースミ": 3.3,
+    "96ガロン": 3.1, "96ガロンデコ": 3.1, "ラピッドブラスター": 3.1, "ラピッドブラスターデコ": 3.1, "ノーチラス47": 3.1, "ノーチラス79": 3.1, "モップリン": 3.1, "モップリンD": 3.1,
+    "デュアルスイーパー": 3.0, "デュアルスイーパーカスタム": 3.0, "プライムシューター": 3.0, "プライムシューターコラボ": 3.0, "H3リールガン": 3.0, "H3リールガンD": 3.0, "スペースシューター": 3.0, "スペースシューターコラボ": 3.0, "S-BLAST92": 3.0, "S-BLAST91": 3.0,
+    "スクリュースロッシャー": 2.9, "スクリュースロッシャーネオ": 2.9,
+    "ロングブラスター": 2.7, "ロングブラスターカスタム": 2.7, "バケットスロッシャー": 2.7, "バケットスロッシャーデコ": 2.7, "スプラスピナー": 2.7, "スプラスピナーコラボ": 2.7, "L3リールガン": 2.7, "L3リールガンD": 2.7, "オーダースロッシャーレプリカ": 2.7,
+    "ケルビン525": 2.5, "ケルビン525デコ": 2.5, "52ガロン": 2.5, "52ガロンデコ": 2.5, "フィンセント": 2.5, "フィンセント・ヒュー": 2.5, "フィンセントヒュー": 2.5, "24式張替傘・甲": 2.5, "24式張替傘・乙": 2.5,
+    "クアッドホッパーブラック": 2.4, "クアッドホッパーホワイト": 2.4, "スプラマニューバー": 2.4, "スプラマニューバーコラボ": 2.4, "オーダーマニューバーレプリカ": 2.4, "スプラシューター": 2.4, "スプラシューターコラボ": 2.4, "ヒーローシューターレプリカ": 2.4, "オーダーシューターレプリカ": 2.4, "オクタシューターレプリカ": 2.4,
+    "スパイガジェット": 2.3, "スパイガジェットソレーラ": 2.3,
+    "ダイナモローラー": 2.2, "ダイナモローラーテスラ": 2.2, "ヒッセン": 2.2, "ヒッセン・ヒュー": 2.2, "ヒッセンヒュー": 2.2, "N-ZAP85": 2.2, "N-ZAP89": 2.2,
+    "キャンピングシェルター": 2.1, "キャンピングシェルターソレーラ": 2.1,
+    "ホットブラスター": 2.0, "ホットブラスターカスタム": 2.0, "プロモデラーRG": 2.0, "プロモデラーMG": 2.0, "シャープマーカー": 2.0, "シャープマーカーネオ": 2.0, "わかばシューター": 2.0, "もみじシューター": 2.0, "パラシェルター": 2.0, "パラシェルターソレーラ": 2.0, "オーダーシェルターレプリカ": 2.0,
+    "クラッシュブラスター": 1.9, "クラッシュブラスターネオ": 1.9,
+    "ノヴァブラスター": 1.6, "ノヴァブラスターネオ": 1.6, "オーダーブラスターレプリカ": 1.6,
+    "スプラローラー": 1.5, "スプラローラーコラボ": 1.5, "スパッタリー": 1.5, "スパッタリー・ヒュー": 1.5, "スパッタリーヒュー": 1.5, "ホクサイ": 1.5, "ホクサイ・ヒュー": 1.5, "ホクサイヒュー": 1.5, "オーダーローラーレプリカ": 1.5, "オーダーブラシレプリカ": 1.5,
+    "ヴァリアブルローラー": 1.4, "ヴァリアブルローラーフォイル": 1.4,
+    "パブロ": 1.2, "パブロ・ヒュー": 1.2, "パブロヒュー": 1.2, "ボールドマーカー": 1.2, "ボールドマーカーネオ": 1.2,
+  };
 
   function getPowerMeta(powerName) { return GEARPOWER_DATAS[powerName]; }
 
@@ -369,8 +403,8 @@
         const effect = effectByKey("ConsumeRt_Main", Math.min(MAX_GP, ism));
         mainDamageValues.push({ label: "1発インク", value: `${formatNumber(mainCost * effect * 100 / tank, 2)}%` });
       }
-      const range = mainRange(params);
-      if (range !== undefined) mainDamageValues.push({ label: "射程", value: `${formatNumber(range, 2)}DU` });
+      const range = mainRange(weaponName, params);
+      if (range !== undefined) mainDamageValues.push({ label: "射程", value: `約${formatNumber(range, 1)}ライン` });
       results.push({
         type: "multi",
         name: "メインダメージ",
@@ -669,58 +703,13 @@
     return Math.ceil(firstNumber(params && params.main, MAIN_LOCK_KEYS) || 0);
   }
 
-  function mainRange(params) {
-    const main = params && params.main;
-    if (!main) return undefined;
-    const direct = firstNumber(main, [
-      "Range_Distance",
-      "DistanceFullCharge",
-      "DistanceMaxCharge",
-      "Distance",
-      "Range",
-    ]);
-    if (direct !== undefined) return direct;
-    const distanceDamage = largestDistanceFromKeys(main, [
-      "DistanceDamage",
-      "BlastParam_DistanceDamage",
-      "BlastJumpParam_DistanceDamage",
-      "DistanceDamage_BlastParamArray",
-      "DistanceDamage_BlastParamChase",
-      "DistanceDamage_SplashBlastParam",
-      "ExhaleBlastParamMaxChargeDistanceDamage",
-      "ExhaleBlastParamMinChargeDistanceDamage",
-    ]);
-    if (distanceDamage !== undefined) return distanceDamage;
-    const speed = firstNumber(main, ["Range_GoStraightStateEndMaxSpeed", "Range_SpawnSpeed"]);
-    const frames = firstNumber(main, ["Range_GoStraightToBrakeStateFrame", "Range_GoStraightStateEndFrame"]);
-    if (speed !== undefined && frames !== undefined) return speed * frames;
-    return undefined;
+  function mainRange(weaponName, params) {
+    const lineRange = MAIN_RANGE_LINES[weaponName] ?? MAIN_RANGE_LINES[normalizeWeaponName(weaponName)];
+    return lineRange;
   }
 
-  function largestDistanceFromKeys(obj, keys) {
-    let result;
-    for (const key of keys) {
-      const distance = largestDistance(obj && obj[key]);
-      if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
-    }
-    return result;
-  }
-
-  function largestDistance(value) {
-    let result;
-    if (Array.isArray(value)) {
-      for (const entry of value) {
-        const distance = largestDistance(entry);
-        if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
-      }
-    } else if (value && typeof value === "object") {
-      if (typeof value.Distance === "number") result = value.Distance;
-      for (const nested of Object.values(value)) {
-        const distance = largestDistance(nested);
-        if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
-      }
-    }
-    return result;
+  function normalizeWeaponName(name) {
+    return String(name || "").replace(/[・\s-]/g, "").replace("Ⅴ", "V");
   }
 
   function subInkCost(params, weapon) {
