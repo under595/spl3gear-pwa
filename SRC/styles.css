@@ -118,15 +118,38 @@ button { cursor: pointer; }
 }
 
 .analyzer-controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 8px;
-  align-items: center;
   margin-top: 8px;
   padding: 6px;
   border: 1px solid #171717;
   border-radius: 5px;
   background: #2b2b2b;
+}
+
+.analyzer-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 28px;
+  font-size: 13px;
+}
+
+.analyzer-summary {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analyzer-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
 }
 
 .control-line {
@@ -787,7 +810,8 @@ button { cursor: pointer; }
   .weapon-select,
   .favorite-weapon-toggle { height: 38px; }
   .favorite-weapon-toggle { width: 38px; }
-  .analyzer-controls { grid-template-columns: 1fr; align-items: stretch; }
+  .analyzer-body { grid-template-columns: 1fr; align-items: stretch; }
+  .analyzer-header { grid-template-columns: auto minmax(0, 1fr) auto; }
   .control-line { min-height: 32px; }
   .efficiency-header,
   .pinned-result-header { align-items: stretch; }

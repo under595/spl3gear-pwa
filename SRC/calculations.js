@@ -369,6 +369,8 @@
         const effect = effectByKey("ConsumeRt_Main", Math.min(MAX_GP, ism));
         mainDamageValues.push({ label: "1発インク", value: `${formatNumber(mainCost * effect * 100 / tank, 2)}%` });
       }
+      const range = mainRange(params);
+      if (range !== undefined) mainDamageValues.push({ label: "射程", value: `${formatNumber(range, 2)}DU` });
       results.push({
         type: "multi",
         name: "メインダメージ",
@@ -665,6 +667,60 @@
 
   function mainInkLock(params) {
     return Math.ceil(firstNumber(params && params.main, MAIN_LOCK_KEYS) || 0);
+  }
+
+  function mainRange(params) {
+    const main = params && params.main;
+    if (!main) return undefined;
+    const direct = firstNumber(main, [
+      "Range_Distance",
+      "DistanceFullCharge",
+      "DistanceMaxCharge",
+      "Distance",
+      "Range",
+    ]);
+    if (direct !== undefined) return direct;
+    const distanceDamage = largestDistanceFromKeys(main, [
+      "DistanceDamage",
+      "BlastParam_DistanceDamage",
+      "BlastJumpParam_DistanceDamage",
+      "DistanceDamage_BlastParamArray",
+      "DistanceDamage_BlastParamChase",
+      "DistanceDamage_SplashBlastParam",
+      "ExhaleBlastParamMaxChargeDistanceDamage",
+      "ExhaleBlastParamMinChargeDistanceDamage",
+    ]);
+    if (distanceDamage !== undefined) return distanceDamage;
+    const speed = firstNumber(main, ["Range_GoStraightStateEndMaxSpeed", "Range_SpawnSpeed"]);
+    const frames = firstNumber(main, ["Range_GoStraightToBrakeStateFrame", "Range_GoStraightStateEndFrame"]);
+    if (speed !== undefined && frames !== undefined) return speed * frames;
+    return undefined;
+  }
+
+  function largestDistanceFromKeys(obj, keys) {
+    let result;
+    for (const key of keys) {
+      const distance = largestDistance(obj && obj[key]);
+      if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
+    }
+    return result;
+  }
+
+  function largestDistance(value) {
+    let result;
+    if (Array.isArray(value)) {
+      for (const entry of value) {
+        const distance = largestDistance(entry);
+        if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
+      }
+    } else if (value && typeof value === "object") {
+      if (typeof value.Distance === "number") result = value.Distance;
+      for (const nested of Object.values(value)) {
+        const distance = largestDistance(nested);
+        if (distance !== undefined) result = result === undefined ? distance : Math.max(result, distance);
+      }
+    }
+    return result;
   }
 
   function subInkCost(params, weapon) {

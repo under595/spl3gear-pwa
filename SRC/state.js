@@ -47,6 +47,7 @@
       ldeIntensity: 35,
       drinkActive: false,
       comebackActive: false,
+      analyzerControlsOpen: true,
       weaponDetailsOpen: true,
       efficiencyTestOpen: true,
       mainShotCount: 5,

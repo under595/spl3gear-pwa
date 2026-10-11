@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.02";
+  const APP_VERSION = "Ver1.03";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -134,7 +134,22 @@ function renderEfficiencyMeter(entry) {
 }
 
 function renderAnalyzerControls(state, actions) {
-  const wrap = createElement("section", "analyzer-controls", { "aria-label": "解析条件" });
+  const isOpen = state.analyzerControlsOpen !== false;
+  const wrap = createElement("section", `analyzer-controls ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "解析条件" });
+
+  const header = createElement("div", "analyzer-header");
+  header.append(createElement("strong", "", { text: "解析条件" }));
+  const summary = createElement("span", "analyzer-summary", { text: analyzerSummaryText(state) });
+  const toggle = createElement("button", "detail-toggle", {
+    type: "button",
+    text: isOpen ? "閉じる" : "開く",
+    title: isOpen ? "解析条件を閉じる" : "解析条件を開く",
+    "aria-expanded": String(isOpen),
+  });
+  toggle.addEventListener("click", actions.toggleAnalyzerControls);
+  header.append(summary, toggle);
+  wrap.append(header);
+  if (!isOpen) return wrap;
 
   const lde = createElement("label", "control-line");
   lde.append(createElement("span", "", { text: "ラスパ強度" }));
@@ -150,7 +165,8 @@ function renderAnalyzerControls(state, actions) {
   checkbox.addEventListener("change", (event) => actions.setDrinkActive(event.target.checked));
   drink.append(checkbox, createElement("span", "", { text: "ドリンク状態" }));
 
-  wrap.append(lde, drink);
+  const body = createElement("div", "analyzer-body");
+  body.append(lde, drink);
 
   if (hasMainPower(state, "カムバック")) {
     const comeback = createElement("label", "control-line checkbox-line");
@@ -158,10 +174,19 @@ function renderAnalyzerControls(state, actions) {
     comebackCheckbox.checked = Boolean(state.comebackActive);
     comebackCheckbox.addEventListener("change", (event) => actions.setComebackActive(event.target.checked));
     comeback.append(comebackCheckbox, createElement("span", "", { text: "カムバック" }));
-    wrap.append(comeback);
+    body.append(comeback);
   }
 
+  wrap.append(body);
   return wrap;
+}
+
+function analyzerSummaryText(state) {
+  const intensity = Number(state.ldeIntensity ?? 35);
+  const items = [`ラスパ${intensity}`];
+  if (state.drinkActive) items.push("ドリンクON");
+  if (state.comebackActive && hasMainPower(state, "カムバック")) items.push("カムバックON");
+  return items.join(" / ");
 }
 
 function hasMainPower(state, powerName) {
@@ -352,8 +377,8 @@ function renderPinnedResults(results, state, actions) {
 
   const header = createElement("div", "pinned-result-header");
   header.append(createElement("strong", "", { text: "ブキ詳細" }));
-  const mainInk = mainInkSummary(pinned);
-  if (mainInk) header.append(createElement("span", "detail-summary", { text: `メイン1発 ${mainInk}` }));
+  const summary = mainDetailSummary(pinned);
+  if (summary) header.append(createElement("span", "detail-summary", { text: summary }));
   const toggle = createElement("button", "detail-toggle", {
     type: "button",
     text: isOpen ? "閉じる" : "開く",
@@ -373,10 +398,14 @@ function renderPinnedResults(results, state, actions) {
   return section;
 }
 
-function mainInkSummary(results) {
+function mainDetailSummary(results) {
   const mainDamage = results.find((result) => result.name === "メインダメージ");
-  const value = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
-  return value && value.value;
+  const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
+  const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
+  return [
+    mainInk ? `メイン1発 ${mainInk.value}` : "",
+    range ? `射程 ${range.value}` : "",
+  ].filter(Boolean).join(" / ");
 }
 
 function renderResults(results) {
