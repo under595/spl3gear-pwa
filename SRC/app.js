@@ -28,6 +28,76 @@
     toggleSlotDisabled(slot) { toggleSlotDisabled(state, slot); redraw(); },
     togglePool() { state.poolVisible = !state.poolVisible; redraw(); },
 
+    pointerStart(event, source, powerName) {
+      if (!powerName || event.pointerType === "mouse" && event.button !== 0) return;
+      state.pointerDrag = {
+        source,
+        powerName,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        active: false,
+        hover: null,
+      };
+    },
+
+    pointerMove(event) {
+      const drag = state.pointerDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const moved = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY);
+      if (!drag.active && moved < 8) return;
+      if (!drag.active) {
+        drag.active = true;
+        state.drag = { ...drag.source, powerName: drag.powerName };
+        root.classList.add("is-touch-dragging");
+        markSlotValidity(root, drag.powerName);
+      }
+      event.preventDefault();
+      updatePointerGhost(drag.powerName, event.clientX, event.clientY);
+      const slotEl = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(".gear-slot");
+      if (drag.hover && drag.hover !== slotEl) drag.hover.classList.remove("drop-hover");
+      drag.hover = slotEl || null;
+      if (slotEl) {
+        const slot = readSlotFromElement(slotEl);
+        slotEl.classList.toggle("drop-hover", canPlacePower(drag.powerName, slot));
+      }
+    },
+
+    pointerEnd(event) {
+      const drag = state.pointerDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const wasActive = Boolean(drag.active);
+      const slotEl = wasActive ? document.elementFromPoint(event.clientX, event.clientY)?.closest?.(".gear-slot") : null;
+      state.pointerDrag = null;
+      state.drag = null;
+      root.classList.remove("is-touch-dragging");
+      clearPointerGhost();
+      clearSlotValidity(root);
+      if (!wasActive) return;
+      state.lastPointerDropAt = Date.now();
+      if (!slotEl) {
+        redraw();
+        return;
+      }
+      const slot = readSlotFromElement(slotEl);
+      movePowerToSlot(state, drag.source, slot, drag.powerName);
+      redraw();
+    },
+
+    pointerCancel(event) {
+      const drag = state.pointerDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      state.pointerDrag = null;
+      state.drag = null;
+      root.classList.remove("is-touch-dragging");
+      clearPointerGhost();
+      clearSlotValidity(root);
+    },
+
+    wasPointerDropRecently() {
+      return Date.now() - Number(state.lastPointerDropAt || 0) < 400;
+    },
+
     dragStartFromPool(event, powerName) {
       state.drag = { kind: "pool", powerName };
       event.dataTransfer.effectAllowed = "copy";
@@ -172,6 +242,30 @@
     if (favorites.has(weaponName)) favorites.delete(weaponName);
     else favorites.add(weaponName);
     current.favoriteWeapons = [...favorites].filter((name) => WEAPON_DATAS[name]);
+  }
+
+  function readSlotFromElement(el) {
+    return { part: el.dataset.part, type: el.dataset.type, index: Number(el.dataset.index) };
+  }
+
+  function updatePointerGhost(powerName, x, y) {
+    let ghost = root.querySelector(".touch-drag-ghost");
+    if (!ghost) {
+      const meta = window.SPL3.calculations.getPowerMeta(powerName);
+      ghost = document.createElement("div");
+      ghost.className = "touch-drag-ghost";
+      const img = document.createElement("img");
+      img.alt = powerName;
+      img.draggable = false;
+      img.src = window.SPL3.utils.assetPath((meta && meta.i) || "gp27.png");
+      ghost.append(img);
+      root.append(ghost);
+    }
+    ghost.style.transform = `translate(${x + 10}px, ${y + 10}px)`;
+  }
+
+  function clearPointerGhost() {
+    root.querySelector(".touch-drag-ghost")?.remove();
   }
 
   redraw();

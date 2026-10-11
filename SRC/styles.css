@@ -395,6 +395,9 @@ button { cursor: pointer; }
   background: radial-gradient(circle at 45% 38%, #252525 0 35%, #050505 36% 100%);
   box-shadow: 0 0 0 1px #858585 inset, 0 2px 3px rgba(0,0,0,.75);
   color: #fff;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .gear-slot.is-disabled .power-icon {
@@ -536,6 +539,9 @@ button { cursor: pointer; }
   border-radius: 999px;
   background: #050505;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,.8));
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .power-button:hover { transform: translateY(-1px) scale(1.04); }
@@ -556,6 +562,31 @@ button { cursor: pointer; }
   font-size: 12px;
   font-weight: 700;
   text-shadow: 0 1px #000;
+}
+
+.touch-drag-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #050505;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.8));
+}
+
+.touch-drag-ghost img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.simulator.is-touch-dragging {
+  touch-action: none;
 }
 
 .pinned-result-group,

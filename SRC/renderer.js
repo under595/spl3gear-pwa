@@ -251,6 +251,9 @@ function renderSlot(slot, state, actions, extraClass) {
   slotEl.addEventListener("dragover", (event) => actions.dragOverSlot(event, slot));
   slotEl.addEventListener("dragleave", (event) => actions.dragLeaveSlot(event));
   slotEl.addEventListener("drop", (event) => actions.dropOnSlot(event, slot));
+  slotEl.addEventListener("pointermove", (event) => actions.pointerMove(event));
+  slotEl.addEventListener("pointerup", (event) => actions.pointerEnd(event));
+  slotEl.addEventListener("pointercancel", (event) => actions.pointerCancel(event));
   slotEl.addEventListener("contextmenu", (event) => {
     if (!powerName) return;
     event.preventDefault();
@@ -263,6 +266,7 @@ function renderSlot(slot, state, actions, extraClass) {
     actions.toggleSlotDisabled(slot);
   });
   slotEl.addEventListener("click", (event) => {
+    if (actions.wasPointerDropRecently()) return;
     if (!powerName || event.detail > 1) return;
     clearTimeout(slotEl.removeTimer);
     if (disabled) {
@@ -276,6 +280,10 @@ function renderSlot(slot, state, actions, extraClass) {
     slotEl.draggable = true;
     slotEl.addEventListener("dragstart", (event) => actions.dragStartFromSlot(event, slot, powerName));
     slotEl.addEventListener("dragend", actions.dragEnd);
+    slotEl.addEventListener("pointerdown", (event) => {
+      actions.pointerStart(event, { kind: "slot", slot }, powerName);
+      if (event.pointerType !== "mouse") slotEl.setPointerCapture?.(event.pointerId);
+    });
     slotEl.append(powerIcon(powerName));
     if (disabled) slotEl.append(createElement("span", "disabled-mark", { text: "×" }));
   } else {
@@ -315,9 +323,19 @@ function renderPowerButton(powerName, actions) {
   const allowedPart = getAllowedPart(powerName);
   if (allowedPart) button.dataset.allowedPart = allowedPart;
   button.draggable = true;
-  button.addEventListener("click", () => actions.addPower(powerName));
+  button.addEventListener("click", () => {
+    if (actions.wasPointerDropRecently()) return;
+    actions.addPower(powerName);
+  });
   button.addEventListener("dragstart", (event) => actions.dragStartFromPool(event, powerName));
   button.addEventListener("dragend", actions.dragEnd);
+  button.addEventListener("pointerdown", (event) => {
+    actions.pointerStart(event, { kind: "pool" }, powerName);
+    if (event.pointerType !== "mouse") button.setPointerCapture?.(event.pointerId);
+  });
+  button.addEventListener("pointermove", (event) => actions.pointerMove(event));
+  button.addEventListener("pointerup", (event) => actions.pointerEnd(event));
+  button.addEventListener("pointercancel", (event) => actions.pointerCancel(event));
   button.append(iconImage(meta?.i, powerName, "power-icon"));
   return button;
 }
