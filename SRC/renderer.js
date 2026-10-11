@@ -3,8 +3,8 @@
   const { PARTS, getSlotValue, isSlotDisabled } = window.SPL3.state;
   const { assetPath, createElement } = window.SPL3.utils;
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
-  const PINNED_RESULT_NAMES = new Set(["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"]);
-  const PINNED_RESULT_ORDER = ["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"];
+  const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
+  const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
   const APP_VERSION = "Ver1.03";
 
 function render(root, state, actions) {
@@ -409,7 +409,7 @@ function renderPinnedResults(results, state, actions) {
 }
 
 function mainDetailSummary(results) {
-  const mainDamage = results.find((result) => result.name === "メインダメージ");
+  const mainDamage = results.find((result) => result.name === "メイン");
   const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
   const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
   return [
@@ -454,7 +454,7 @@ function renderRangeComparisonRow(state, weaponName) {
     comebackActive: state.comebackActive,
     disabledSlots: state.disabledSlots,
   });
-  const mainDamage = results.find((result) => result.name === "メインダメージ");
+  const mainDamage = results.find((result) => result.name === "メイン");
   const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
   const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
   const row = createElement("article", "range-comparison-row");

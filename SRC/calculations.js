@@ -108,6 +108,52 @@
     "InkRecoverStop_WeaponWideSwingParam",
     "InkRecoverStop_WeaponVerticalSwingParam",
   ];
+  const MAIN_PAINT_POINTS = {
+    "わかばシューター": { p: 4.5, f: 5 }, "もみじシューター": { p: 4.5, f: 5 },
+    "ボールドマーカー": { p: 5.7, f: 5 }, "ボールドマーカーネオ": { p: 5.7, f: 5 },
+    "シャープマーカー": { p: 4.1, f: 5 }, "シャープマーカーネオ": { p: 4.1, f: 5 },
+    "スプラシューター": { p: 4.0, f: 6 }, "スプラシューターコラボ": { p: 4.0, f: 6 }, "ヒーローシューターレプリカ": { p: 4.0, f: 6 }, "オーダーシューターレプリカ": { p: 4.0, f: 6 },
+    "N-ZAP85": { p: 3.6, f: 5 }, "N-ZAP89": { p: 3.6, f: 5 },
+    "プロモデラーMG": { p: 4.5, f: 4 }, "プロモデラーRG": { p: 4.5, f: 4 },
+    "52ガロン": { p: 6.7, f: 9 }, "52ガロンデコ": { p: 6.7, f: 9 },
+    "96ガロン": { p: 7.5, f: 12 }, "96ガロンデコ": { p: 7.5, f: 12 },
+    "プライムシューター": { p: 4.7, f: 8 }, "プライムシューターコラボ": { p: 4.7, f: 8 },
+    "ジェットスイーパー": { p: 4.5, f: 8 }, "ジェットスイーパーカスタム": { p: 4.5, f: 8 },
+    "スペースシューター": { p: 4.0, f: 6 }, "スペースシューターコラボ": { p: 4.0, f: 6 },
+    "ノヴァブラスター": { p: 14.0, f: 40 }, "ノヴァブラスターネオ": { p: 14.0, f: 40 },
+    "ホットブラスター": { p: 16.2, f: 50 }, "ホットブラスターカスタム": { p: 16.2, f: 50 },
+    "ロングブラスター": { p: 14.2, f: 60 }, "ロングブラスターカスタム": { p: 14.2, f: 60 },
+    "クラッシュブラスター": { p: 8.6, f: 20 }, "クラッシュブラスターネオ": { p: 8.6, f: 20 },
+    "ラピッドブラスター": { p: 14.4, f: 35 }, "ラピッドブラスターデコ": { p: 14.4, f: 35 },
+    "Rブラスターエリート": { p: 13.5, f: 40 }, "Rブラスターエリートデコ": { p: 13.5, f: 40 },
+    "S-BLAST92": { p: 13.6, f: 55 }, "S-BLAST91": { p: 13.6, f: 55 },
+    "L3リールガン": { p: 12.8, f: 18, shotsPerAction: 3 }, "L3リールガンD": { p: 12.8, f: 18, shotsPerAction: 3 },
+    "H3リールガン": { p: 16.3, f: 32, shotsPerAction: 3 }, "H3リールガンD": { p: 16.3, f: 32, shotsPerAction: 3 },
+    "パブロ": { p: 10.3, f: 7 }, "パブロ・ヒュー": { p: 10.3, f: 7 }, "パブロヒュー": { p: 10.3, f: 7 },
+    "ホクサイ": { p: 7.7, f: 11 }, "ホクサイ・ヒュー": { p: 7.7, f: 11 }, "ホクサイヒュー": { p: 7.7, f: 11 },
+    "バケットスロッシャー": { p: 13.6, f: 29 }, "バケットスロッシャーデコ": { p: 13.6, f: 29 },
+    "ヒッセン": { p: 11.5, f: 25 }, "ヒッセン・ヒュー": { p: 11.5, f: 25 }, "ヒッセンヒュー": { p: 11.5, f: 25 },
+    "スクリュースロッシャー": { p: 14.7, f: 38 }, "スクリュースロッシャーネオ": { p: 14.7, f: 38 },
+    "オーバーフロッシャー": { p: 16.6, f: 32 }, "オーバーフロッシャーデコ": { p: 16.6, f: 32 },
+    "エクスプロッシャー": { p: 21.8, f: 55 }, "エクスプロッシャーカスタム": { p: 21.8, f: 55 },
+    "モップリン": { p: 18.0, f: 45 }, "モップリンD": { p: 18.0, f: 45 },
+    "スプラマニューバー": { p: 3.0, f: 5 }, "スプラマニューバーコラボ": { p: 3.0, f: 5 }, "オーダーマニューバーレプリカ": { p: 3.0, f: 5 },
+    "スパッタリー": { p: 4.0, f: 5 }, "スパッタリー・ヒュー": { p: 4.0, f: 5 },
+    "デュアルスイーパー": { p: 4.2, f: 6 }, "デュアルスイーパーカスタム": { p: 4.2, f: 6 },
+    "ケルビン525": { p: 5.2, f: 9 }, "ケルビン525デコ": { p: 5.2, f: 9 },
+    "クアッドホッパーブラック": { p: 3.3, f: 6 }, "クアッドホッパーホワイト": { p: 3.3, f: 6 },
+    "ガエンFF": { p: 4.6, f: 8 },
+    "パラシェルター": { p: 17.2, f: 29 }, "パラシェルターソレーラ": { p: 17.2, f: 29 }, "オーダーシェルターレプリカ": { p: 17.2, f: 29 },
+    "キャンピングシェルター": { p: 17.5, f: 51 }, "キャンピングシェルターソレーラ": { p: 17.5, f: 51 },
+    "スパイガジェット": { p: 12.5, f: 26 }, "スパイガジェットソレーラ": { p: 12.5, f: 26 },
+    "24式張替傘・甲": { p: 14.8, f: 34 },
+    "スプラチャージャー": { p: 23.0, f: 66 }, "スプラチャージャーコラボ": { p: 23.0, f: 66 }, "スプラスコープ": { p: 23.0, f: 66 }, "スプラスコープコラボ": { p: 23.0, f: 66 },
+    "リッター4K": { p: 32.0, f: 98 }, "リッター4Kカスタム": { p: 32.0, f: 98 }, "4Kスコープ": { p: 32.0, f: 98 }, "4Kスコープカスタム": { p: 32.0, f: 98 },
+    "スクイックリンα": { p: 20.0, f: 51 }, "スクイックリンβ": { p: 20.0, f: 51 },
+    "14式竹筒銃・甲": { p: 15.0, f: 26 }, "14式竹筒銃・乙": { p: 15.0, f: 26 },
+    "ソイチューバー": { p: 24.0, f: 77 }, "ソイチューバーカスタム": { p: 24.0, f: 77 },
+    "R-PEN/5H": { p: 16.0, f: 146, shotsPerAction: 5 }, "R-PEN/5B": { p: 16.0, f: 146, shotsPerAction: 5 },
+  };
   const MAIN_RANGE_LINES = {
     "4Kスコープ": 6.5, "4Kスコープカスタム": 6.5,
     "リッター4K": 6.2, "リッター4Kカスタム": 6.2,
@@ -353,15 +399,21 @@
 
     if (params.kit.SpecialPoint) {
       const effect = effectByKey("IncreaseRt_Special", Math.min(MAX_GP, scu));
+      const specialPoint = Math.ceil(params.kit.SpecialPoint / effect);
+      const paintPoint = mainPaintPoint(weaponName);
+      const specialValues = [
+        { label: "基本", value: `${params.kit.SpecialPoint}P` },
+        { label: "スペ増後", value: `${specialPoint}P` },
+      ];
+      if (paintPoint) {
+        specialValues.push({ label: "必要ショット", value: `${Math.ceil(specialPoint / paintPoint.p)}発` });
+      }
       results.push({
         type: "multi",
         name: "スペシャル必要P",
         icon: SENDOU_SPECIAL_ICON(weapon),
         gp: scu,
-        values: [
-          { label: "基本", value: `${params.kit.SpecialPoint}P` },
-          { label: "スペ増後", value: `${Math.ceil(params.kit.SpecialPoint / effect)}P` },
-        ],
+        values: specialValues,
         ratio: calcBarRatio(scu),
       });
     }
@@ -399,6 +451,10 @@
     const damages = collectDamageValues(params.main).slice(0, 3);
     if (damages.length) {
       const mainDamageValues = damages.map((item) => ({ label: item.label, value: `${formatNumber(item.value / 10, 1)}` }));
+      const killSpeed = mainKillSpeed(damages[0].value, weaponName);
+      if (killSpeed) mainDamageValues.push({ label: "キル速", value: killSpeed });
+      const paintPoint = mainPaintPoint(weaponName);
+      if (paintPoint) mainDamageValues.push({ label: "塗P/発", value: `${formatNumber(paintPoint.p, 1)}P` });
       if (mainCost !== undefined) {
         const tank = inkTankSize(weaponName);
         const effect = effectByKey("ConsumeRt_Main", Math.min(MAX_GP, ism));
@@ -408,7 +464,7 @@
       if (range !== undefined) mainDamageValues.push({ label: "射程", value: `約${formatNumber(range, 1)}ライン` });
       results.push({
         type: "multi",
-        name: "メインダメージ",
+        name: "メイン",
         icon: weapon && weapon.i,
         values: mainDamageValues,
         ratio: clamp((damages[0].value / 10) / 100 * 100, 0, 100),
@@ -422,7 +478,7 @@
       if (subCost) subDamageValues.push({ label: "消費", value: `(${subCost.current}/${subCost.base})` });
       results.push({
         type: "multi",
-        name: "サブダメージ",
+        name: "サブ",
         icon: SUB_DATAS[weapon && weapon.sub] && SUB_DATAS[weapon.sub].i,
         values: subDamageValues,
         ratio: calcBarRatio(0),
@@ -710,6 +766,19 @@
   function mainRange(weaponName, params) {
     const lineRange = MAIN_RANGE_LINES[weaponName] ?? MAIN_RANGE_LINES[normalizeWeaponName(weaponName)];
     return lineRange;
+  }
+
+  function mainPaintPoint(weaponName) {
+    return MAIN_PAINT_POINTS[weaponName] ?? MAIN_PAINT_POINTS[normalizeWeaponName(weaponName)] ?? null;
+  }
+
+  function mainKillSpeed(rawDamage, weaponName) {
+    const paintPoint = mainPaintPoint(weaponName);
+    if (!paintPoint || !rawDamage) return null;
+    const damage = rawDamage / 10;
+    const shots = Math.ceil(100 / Math.max(0.1, damage));
+    const frames = Math.max(0, (shots - 1) * paintPoint.f);
+    return `${frames}F/${formatNumber(frames / 60, 2)}秒`;
   }
 
   function normalizeWeaponName(name) {
