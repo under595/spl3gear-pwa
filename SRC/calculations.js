@@ -622,7 +622,7 @@
     if (subDamages.length) {
       const subDamageValues = subDamages.map((item) => ({ label: item.label, value: `${formatNumber(item.value / 10, 1)}` }));
       const subCost = subInkConsumptionValues(params, weapon, weaponName, iss);
-      if (subCost) subDamageValues.push({ label: "消費", value: `(${subCost.current}/${subCost.base})` });
+      if (subCost) subDamageValues.push({ label: "消費", value: `(サブ効率後${subCost.current}/基本${subCost.base})` });
       results.push({
         type: "multi",
         name: "サブ",
