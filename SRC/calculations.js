@@ -1,5 +1,6 @@
 (function () {
   const { GEARPOWER_DATAS, GEARPOWER_TABLE, SUB_DATAS, WEAPON_DATAS } = window.SPL3_DATA;
+  const WIKI_WEAPON_MAIN = window.SPL3_WIKI_WEAPON_MAIN;
   const SENDOU = window.SPL3_SENDOU || {};
   const { nearestKey } = window.SPL3.utils;
   const BODY_DOUBLE = "追加ギアパワー倍化";
@@ -944,11 +945,18 @@
       if (modeRange.standingEffective !== undefined) parts.push(`立ち撃ち時${formatRangeLine(modeRange.standingEffective)}`);
       return `${parts[0]}（${parts.slice(1).join(" / ")}）`;
     }
+    const wikiRange = wikiMainRangeText(weaponName);
+    if (wikiRange) return wikiRange;
     const effective = MAIN_EFFECTIVE_RANGE_LINES[weaponName] ?? MAIN_EFFECTIVE_RANGE_LINES[key] ?? MAIN_CONFIRMED_RANGE_LINES[weaponName] ?? MAIN_CONFIRMED_RANGE_LINES[key];
     if (effective === undefined) return "";
     const confirmed = MAIN_CONFIRMED_RANGE_LINES[weaponName] ?? MAIN_CONFIRMED_RANGE_LINES[key];
     if (confirmed !== undefined && confirmed !== effective) return `有効射程${formatRangeLine(effective)}（確定数維持射程${formatRangeLine(confirmed)}）`;
     return `有効射程${formatRangeLine(effective)}`;
+  }
+
+  function wikiMainRangeText(weaponName) {
+    const record = WIKI_WEAPON_MAIN && WIKI_WEAPON_MAIN.weapons && WIKI_WEAPON_MAIN.weapons[weaponName];
+    return record && record.range && record.range.display || "";
   }
 
   function formatRangeLine(value) {
