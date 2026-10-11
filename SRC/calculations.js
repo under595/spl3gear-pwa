@@ -338,6 +338,23 @@
     "ヴァリアブルローラー": 1.4, "ヴァリアブルローラーフォイル": 1.4,
     "パブロ": 1.2, "パブロ・ヒュー": 1.2, "パブロヒュー": 1.2, "ボールドマーカー": 1.6, "ボールドマーカーネオ": 1.6,
   };
+  const MAIN_EFFECTIVE_RANGE_LINES = {
+    "ジェットスイーパー": 4.6, "ジェットスイーパーカスタム": 4.6, "ジェットスイーパーCOBR": 4.6,
+    "ハイドラント": 5.0, "ハイドラントカスタム": 5.0, "ハイドラント圧": 5.0,
+    "クーゲルシュライバー": 4.7, "クーゲルシュライバー・ヒュー": 4.7, "クーゲルシュライバーヒュー": 4.7,
+    "バレルスピナー": 4.2, "バレルスピナーデコ": 4.2, "オーダースピナーレプリカ": 4.2,
+    "スプラスピナー": 3.0, "スプラスピナーコラボ": 3.0, "スプラスピナーPYTN": 3.0,
+    "ノーチラス47": 3.6, "ノーチラス79": 3.6,
+    "オーバーフロッシャー": 5.0, "オーバーフロッシャーデコ": 5.0,
+    "スパッタリー": 1.9, "スパッタリー・ヒュー": 1.9, "スパッタリーヒュー": 1.9, "スパッタリーOWL": 1.9,
+    "モップリン": 3.1, "モップリンD": 3.1, "モップリン角": 3.1,
+  };
+  const MAIN_RANGE_MODE_LINES = {
+    "ガエンFF": { mode: "スライド後", effective: 3.0, standingEffective: 4.1, confirmed: 2.9, standingConfirmed: 3.8 },
+    "ガエンFFカスタム": { mode: "スライド後", effective: 3.0, standingEffective: 4.1, confirmed: 2.9, standingConfirmed: 3.8 },
+    "ケルビン525": { mode: "スライド後", effective: 3.4, standingEffective: 3.0, confirmed: 3.1, standingConfirmed: 2.8 },
+    "ケルビン525デコ": { mode: "スライド後", effective: 3.4, standingEffective: 3.0, confirmed: 3.1, standingConfirmed: 2.8 },
+  };
 
   function getPowerMeta(powerName) { return GEARPOWER_DATAS[powerName]; }
 
@@ -614,8 +631,8 @@
         const effect = effectByKey("ConsumeRt_Main", Math.min(MAX_GP, ism));
         mainDamageValues.push({ label: "1発インク", value: `${formatNumber(mainCost * effect * 100 / tank, 2)}%` });
       }
-      const range = mainRange(weaponName, params);
-      if (range !== undefined) mainDamageValues.push({ label: "確定数維持射程", value: `約${formatRangeLine(range)}ライン` });
+      const range = mainRangeText(weaponName, params);
+      if (range) mainDamageValues.push({ label: "射程", value: range });
       results.push({
         type: "multi",
         name: "メイン",
@@ -918,13 +935,24 @@
     return Math.ceil(firstNumber(params && params.main, MAIN_LOCK_KEYS) || 0);
   }
 
-  function mainRange(weaponName, params) {
-    const lineRange = MAIN_CONFIRMED_RANGE_LINES[weaponName] ?? MAIN_CONFIRMED_RANGE_LINES[normalizeWeaponName(weaponName)];
-    return lineRange;
+  function mainRangeText(weaponName, params) {
+    const key = normalizeWeaponName(weaponName);
+    const modeRange = MAIN_RANGE_MODE_LINES[weaponName] ?? MAIN_RANGE_MODE_LINES[key];
+    if (modeRange) {
+      const mode = modeRange.mode || "強化後";
+      const parts = [`${mode}の有効射程${formatRangeLine(modeRange.effective)}`];
+      if (modeRange.standingEffective !== undefined) parts.push(`立ち撃ち時${formatRangeLine(modeRange.standingEffective)}`);
+      return `${parts[0]}（${parts.slice(1).join(" / ")}）`;
+    }
+    const effective = MAIN_EFFECTIVE_RANGE_LINES[weaponName] ?? MAIN_EFFECTIVE_RANGE_LINES[key] ?? MAIN_CONFIRMED_RANGE_LINES[weaponName] ?? MAIN_CONFIRMED_RANGE_LINES[key];
+    if (effective === undefined) return "";
+    const confirmed = MAIN_CONFIRMED_RANGE_LINES[weaponName] ?? MAIN_CONFIRMED_RANGE_LINES[key];
+    if (confirmed !== undefined && confirmed !== effective) return `有効射程${formatRangeLine(effective)}（確定数維持射程${formatRangeLine(confirmed)}）`;
+    return `有効射程${formatRangeLine(effective)}`;
   }
 
   function formatRangeLine(value) {
-    return Number(value).toFixed(2).replace(/\.?0+$/, "");
+    return Number(value).toFixed(1);
   }
 
   function mainPaintPoint(weaponName) {
