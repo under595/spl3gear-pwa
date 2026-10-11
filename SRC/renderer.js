@@ -18,8 +18,8 @@ function render(root, state, actions) {
   root.append(
     renderWeaponBar(state, actions),
     renderPinnedResults(results, state, actions),
-    renderAnalyzerControls(state, actions),
     renderEfficiencyTest(state, actions),
+    renderAnalyzerControls(state, actions),
     renderGearSetTabs(state, actions),
     renderGearInput(state, actions),
     renderPowerPool(state, actions),
