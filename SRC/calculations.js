@@ -346,6 +346,7 @@
     const results = [];
     const scu = totals["スペシャル増加量"] ? totals["スペシャル増加量"].gp : 0;
     const ism = totals["メイン効率"] ? totals["メイン効率"].gp : 0;
+    const iss = totals["サブ効率"] ? totals["サブ効率"].gp : 0;
     const rsu = totals["ヒト移動速度"] ? totals["ヒト移動速度"].gp : 0;
     const spu = totals["スペシャル性能"] ? totals["スペシャル性能"].gp : 0;
     const os = Boolean(totals["対物攻撃力アップ"]);
@@ -416,11 +417,14 @@
 
     const subDamages = collectDamageValues(params.sub).slice(0, 2);
     if (subDamages.length) {
+      const subDamageValues = subDamages.map((item) => ({ label: item.label, value: `${formatNumber(item.value / 10, 1)}` }));
+      const subCost = subInkConsumptionValues(params, weapon, weaponName, iss);
+      if (subCost) subDamageValues.push({ label: "消費", value: `(${subCost.current}/${subCost.base})` });
       results.push({
         type: "multi",
         name: "サブダメージ",
         icon: SUB_DATAS[weapon && weapon.sub] && SUB_DATAS[weapon.sub].i,
-        values: subDamages.map((item) => ({ label: item.label, value: `${formatNumber(item.value / 10, 1)}` })),
+        values: subDamageValues,
         ratio: calcBarRatio(0),
       });
     }
@@ -721,6 +725,18 @@
 
   function subInkLock(params) {
     return Math.ceil((params && params.sub && typeof params.sub.InkRecoverStop === "number") ? params.sub.InkRecoverStop : 0);
+  }
+
+  function subInkConsumptionValues(params, weapon, weaponName, gp) {
+    const baseCost = subInkCost(params, weapon);
+    if (baseCost === undefined) return null;
+    const level = SUB_SAVE_LEVELS[weapon && weapon.sub] ?? 2;
+    const tank = inkTankSize(weaponName);
+    const current = baseCost * effectByKey(`ConsumeRt_Sub_Lv${level}`, Math.min(MAX_GP, gp));
+    return {
+      current: `${formatNumber(current * 100 / tank, 2)}%`,
+      base: `${formatNumber(baseCost * 100 / tank, 2)}%`,
+    };
   }
 
   function recoveryFramesForInk(inkAmount, tank, gp) {
