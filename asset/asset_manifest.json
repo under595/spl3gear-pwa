@@ -1,0 +1,1195 @@
+{
+  "sourcePage": "https://gamewith.jp/splatoon3/366825",
+  "downloadedAt": "2026-10-10T18:24:34",
+  "outputDirectory": "C:\\My_Games\\010_spl3GEAR\\asset",
+  "count": 237,
+  "failedCount": 0,
+  "assets": [
+    {
+      "File": "gamewith_white_logo.png",
+      "Url": "https://gamewith-tool.s3.ap-northeast-1.amazonaws.com/assets/img/gamewith_white_logo.png",
+      "Bytes": 10481
+    },
+    {
+      "File": "splatoon_hatena.png",
+      "Url": "https://gamewith-tool.s3.ap-northeast-1.amazonaws.com/assets/img/splatoon_hatena.png",
+      "Bytes": 5309
+    },
+    {
+      "File": "gp1.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp1.png",
+      "Bytes": 27807
+    },
+    {
+      "File": "gp10.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp10.png",
+      "Bytes": 29058
+    },
+    {
+      "File": "gp11.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp11.png",
+      "Bytes": 27440
+    },
+    {
+      "File": "gp12.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp12.png",
+      "Bytes": 29277
+    },
+    {
+      "File": "gp13.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp13.png",
+      "Bytes": 23881
+    },
+    {
+      "File": "gp14.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp14.png",
+      "Bytes": 28577
+    },
+    {
+      "File": "gp15.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp15.png",
+      "Bytes": 24385
+    },
+    {
+      "File": "gp16.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp16.png",
+      "Bytes": 25576
+    },
+    {
+      "File": "gp17.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp17.png",
+      "Bytes": 25556
+    },
+    {
+      "File": "gp18.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp18.png",
+      "Bytes": 22862
+    },
+    {
+      "File": "gp19.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp19.png",
+      "Bytes": 23450
+    },
+    {
+      "File": "gp2.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp2.png",
+      "Bytes": 26023
+    },
+    {
+      "File": "gp20.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp20.png",
+      "Bytes": 27000
+    },
+    {
+      "File": "gp21.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp21.png",
+      "Bytes": 25884
+    },
+    {
+      "File": "gp22.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp22.png",
+      "Bytes": 22307
+    },
+    {
+      "File": "gp23.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp23.png",
+      "Bytes": 28502
+    },
+    {
+      "File": "gp24.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp24.png",
+      "Bytes": 31534
+    },
+    {
+      "File": "gp25.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp25.png",
+      "Bytes": 28653
+    },
+    {
+      "File": "gp26.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp26.png",
+      "Bytes": 29003
+    },
+    {
+      "File": "gp27.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp27.png",
+      "Bytes": 5309
+    },
+    {
+      "File": "gp3.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp3.png",
+      "Bytes": 23629
+    },
+    {
+      "File": "gp4.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp4.png",
+      "Bytes": 29370
+    },
+    {
+      "File": "gp5.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp5.png",
+      "Bytes": 27346
+    },
+    {
+      "File": "gp6.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp6.png",
+      "Bytes": 27228
+    },
+    {
+      "File": "gp7.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp7.png",
+      "Bytes": 24775
+    },
+    {
+      "File": "gp8.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp8.png",
+      "Bytes": 24119
+    },
+    {
+      "File": "gp9.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/gp9.png",
+      "Bytes": 26481
+    },
+    {
+      "File": "sp1.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp1.png",
+      "Bytes": 34351
+    },
+    {
+      "File": "sp10.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp10.png",
+      "Bytes": 29611
+    },
+    {
+      "File": "sp11.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp11.png",
+      "Bytes": 29865
+    },
+    {
+      "File": "sp12.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp12.png",
+      "Bytes": 24486
+    },
+    {
+      "File": "sp13.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp13.png",
+      "Bytes": 23857
+    },
+    {
+      "File": "sp14.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp14.png",
+      "Bytes": 29383
+    },
+    {
+      "File": "sp15.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp15.png",
+      "Bytes": 21236
+    },
+    {
+      "File": "sp16.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp16.png",
+      "Bytes": 4493
+    },
+    {
+      "File": "sp17.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp17.png",
+      "Bytes": 4836
+    },
+    {
+      "File": "sp18.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp18.png",
+      "Bytes": 6378
+    },
+    {
+      "File": "sp19.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp19.png",
+      "Bytes": 5863
+    },
+    {
+      "File": "sp2.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp2.png",
+      "Bytes": 28989
+    },
+    {
+      "File": "sp3.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp3.png",
+      "Bytes": 26899
+    },
+    {
+      "File": "sp4.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp4.png",
+      "Bytes": 24172
+    },
+    {
+      "File": "sp5.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp5.png",
+      "Bytes": 28588
+    },
+    {
+      "File": "sp6.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp6.png",
+      "Bytes": 32109
+    },
+    {
+      "File": "sp7.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp7.png",
+      "Bytes": 24605
+    },
+    {
+      "File": "sp8.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp8.png",
+      "Bytes": 27254
+    },
+    {
+      "File": "sp9.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sp9.png",
+      "Bytes": 27780
+    },
+    {
+      "File": "spla-gearpower-simulator-header.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/spla-gearpower-simulator-header.png",
+      "Bytes": 9335
+    },
+    {
+      "File": "sub1.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub1.png",
+      "Bytes": 24656
+    },
+    {
+      "File": "sub10.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub10.png",
+      "Bytes": 18557
+    },
+    {
+      "File": "sub11.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub11.png",
+      "Bytes": 21763
+    },
+    {
+      "File": "sub12.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub12.png",
+      "Bytes": 23059
+    },
+    {
+      "File": "sub13.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub13.png",
+      "Bytes": 13758
+    },
+    {
+      "File": "sub14.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub14.png",
+      "Bytes": 19665
+    },
+    {
+      "File": "sub2.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub2.png",
+      "Bytes": 18210
+    },
+    {
+      "File": "sub3.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub3.png",
+      "Bytes": 27486
+    },
+    {
+      "File": "sub4.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub4.png",
+      "Bytes": 25504
+    },
+    {
+      "File": "sub5.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub5.png",
+      "Bytes": 24729
+    },
+    {
+      "File": "sub6.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub6.png",
+      "Bytes": 23790
+    },
+    {
+      "File": "sub7.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub7.png",
+      "Bytes": 20837
+    },
+    {
+      "File": "sub8.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub8.png",
+      "Bytes": 22808
+    },
+    {
+      "File": "sub9.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/sub9.png",
+      "Bytes": 20942
+    },
+    {
+      "File": "we1.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we1.png",
+      "Bytes": 21840
+    },
+    {
+      "File": "we10.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we10.png",
+      "Bytes": 21115
+    },
+    {
+      "File": "we100.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we100.png",
+      "Bytes": 24591
+    },
+    {
+      "File": "we101.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we101.png",
+      "Bytes": 36672
+    },
+    {
+      "File": "we102.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we102.png",
+      "Bytes": 33518
+    },
+    {
+      "File": "we105.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we105.png",
+      "Bytes": 36256
+    },
+    {
+      "File": "we106.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we106.png",
+      "Bytes": 30560
+    },
+    {
+      "File": "we109.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we109.png",
+      "Bytes": 39615
+    },
+    {
+      "File": "we110.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we110.png",
+      "Bytes": 30463
+    },
+    {
+      "File": "we112.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we112.png",
+      "Bytes": 33151
+    },
+    {
+      "File": "we113.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we113.png",
+      "Bytes": 35193
+    },
+    {
+      "File": "we114.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we114.png",
+      "Bytes": 25518
+    },
+    {
+      "File": "we115.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we115.png",
+      "Bytes": 26766
+    },
+    {
+      "File": "we116.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we116.png",
+      "Bytes": 36017
+    },
+    {
+      "File": "we118.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we118.png",
+      "Bytes": 8745
+    },
+    {
+      "File": "we12.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we12.png",
+      "Bytes": 22942
+    },
+    {
+      "File": "we121.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we121.png",
+      "Bytes": 40683
+    },
+    {
+      "File": "we122.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we122.png",
+      "Bytes": 30358
+    },
+    {
+      "File": "we123.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we123.png",
+      "Bytes": 37350
+    },
+    {
+      "File": "we124.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we124.png",
+      "Bytes": 24855
+    },
+    {
+      "File": "we125.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we125.png",
+      "Bytes": 38678
+    },
+    {
+      "File": "we126.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we126.png",
+      "Bytes": 39182
+    },
+    {
+      "File": "we13.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we13.png",
+      "Bytes": 28630
+    },
+    {
+      "File": "we130.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we130.png",
+      "Bytes": 29228
+    },
+    {
+      "File": "we139.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we139.png",
+      "Bytes": 10846
+    },
+    {
+      "File": "we14.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we14.png",
+      "Bytes": 25019
+    },
+    {
+      "File": "we140.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we140.png",
+      "Bytes": 27702
+    },
+    {
+      "File": "we141.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we141.png",
+      "Bytes": 29134
+    },
+    {
+      "File": "we142.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we142.png",
+      "Bytes": 27326
+    },
+    {
+      "File": "we143.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we143.png",
+      "Bytes": 24505
+    },
+    {
+      "File": "we144.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we144.png",
+      "Bytes": 28084
+    },
+    {
+      "File": "we145.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we145.png",
+      "Bytes": 25724
+    },
+    {
+      "File": "we146.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we146.png",
+      "Bytes": 26973
+    },
+    {
+      "File": "we147.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we147.png",
+      "Bytes": 28387
+    },
+    {
+      "File": "we148.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we148.png",
+      "Bytes": 36843
+    },
+    {
+      "File": "we149.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we149.png",
+      "Bytes": 40813
+    },
+    {
+      "File": "we15.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we15.png",
+      "Bytes": 33640
+    },
+    {
+      "File": "we150.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we150.png",
+      "Bytes": 39774
+    },
+    {
+      "File": "we151.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we151.png",
+      "Bytes": 24652
+    },
+    {
+      "File": "we152.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we152.png",
+      "Bytes": 26857
+    },
+    {
+      "File": "we153.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we153.png",
+      "Bytes": 31649
+    },
+    {
+      "File": "we154.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we154.png",
+      "Bytes": 14763
+    },
+    {
+      "File": "we155.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we155.png",
+      "Bytes": 54859
+    },
+    {
+      "File": "we156.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we156.png",
+      "Bytes": 48318
+    },
+    {
+      "File": "we157.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we157.png",
+      "Bytes": 14286
+    },
+    {
+      "File": "we158.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we158.png",
+      "Bytes": 58396
+    },
+    {
+      "File": "we159.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we159.png",
+      "Bytes": 14675
+    },
+    {
+      "File": "we16.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we16.png",
+      "Bytes": 28016
+    },
+    {
+      "File": "we160.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we160.png",
+      "Bytes": 52246
+    },
+    {
+      "File": "we161.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we161.png",
+      "Bytes": 55848
+    },
+    {
+      "File": "we162.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we162.png",
+      "Bytes": 57041
+    },
+    {
+      "File": "we163.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we163.png",
+      "Bytes": 36903
+    },
+    {
+      "File": "we164.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we164.png",
+      "Bytes": 40758
+    },
+    {
+      "File": "we165.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we165.png",
+      "Bytes": 40852
+    },
+    {
+      "File": "we166.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we166.png",
+      "Bytes": 26174
+    },
+    {
+      "File": "we167.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we167.png",
+      "Bytes": 20979
+    },
+    {
+      "File": "we168.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we168.png",
+      "Bytes": 30824
+    },
+    {
+      "File": "we169.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we169.png",
+      "Bytes": 22140
+    },
+    {
+      "File": "we170.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we170.png",
+      "Bytes": 18597
+    },
+    {
+      "File": "we171.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we171.png",
+      "Bytes": 25398
+    },
+    {
+      "File": "we172.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we172.png",
+      "Bytes": 33002
+    },
+    {
+      "File": "we173.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we173.png",
+      "Bytes": 22411
+    },
+    {
+      "File": "we174.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we174.png",
+      "Bytes": 28893
+    },
+    {
+      "File": "we175.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we175.png",
+      "Bytes": 21497
+    },
+    {
+      "File": "we176.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we176.png",
+      "Bytes": 21012
+    },
+    {
+      "File": "we177.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we177.png",
+      "Bytes": 19499
+    },
+    {
+      "File": "we178.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we178.png",
+      "Bytes": 9246
+    },
+    {
+      "File": "we179.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we179.png",
+      "Bytes": 9223
+    },
+    {
+      "File": "we18.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we18.png",
+      "Bytes": 21308
+    },
+    {
+      "File": "we180.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we180.png",
+      "Bytes": 8793
+    },
+    {
+      "File": "we181.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we181.png",
+      "Bytes": 9163
+    },
+    {
+      "File": "we182.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we182.png",
+      "Bytes": 8574
+    },
+    {
+      "File": "we183.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we183.png",
+      "Bytes": 9277
+    },
+    {
+      "File": "we184.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we184.png",
+      "Bytes": 17057
+    },
+    {
+      "File": "we185.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we185.png",
+      "Bytes": 38912
+    },
+    {
+      "File": "we186.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we186.png",
+      "Bytes": 41985
+    },
+    {
+      "File": "we187.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we187.png",
+      "Bytes": 42806
+    },
+    {
+      "File": "we188.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we188.png",
+      "Bytes": 34245
+    },
+    {
+      "File": "we189.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we189.png",
+      "Bytes": 37009
+    },
+    {
+      "File": "we19.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we19.png",
+      "Bytes": 23456
+    },
+    {
+      "File": "we190.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we190.png",
+      "Bytes": 43046
+    },
+    {
+      "File": "we191.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we191.png",
+      "Bytes": 38160
+    },
+    {
+      "File": "we192.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we192.png",
+      "Bytes": 35411
+    },
+    {
+      "File": "we193.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we193.png",
+      "Bytes": 37775
+    },
+    {
+      "File": "we194.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we194.png",
+      "Bytes": 41591
+    },
+    {
+      "File": "we195.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we195.png",
+      "Bytes": 40942
+    },
+    {
+      "File": "we196.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we196.png",
+      "Bytes": 38330
+    },
+    {
+      "File": "we197.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we197.png",
+      "Bytes": 41050
+    },
+    {
+      "File": "we198.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we198.png",
+      "Bytes": 39434
+    },
+    {
+      "File": "we199.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we199.png",
+      "Bytes": 36432
+    },
+    {
+      "File": "we2.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we2.png",
+      "Bytes": 26244
+    },
+    {
+      "File": "we20.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we20.png",
+      "Bytes": 29099
+    },
+    {
+      "File": "we200.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we200.png",
+      "Bytes": 36986
+    },
+    {
+      "File": "we201.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we201.png",
+      "Bytes": 40098
+    },
+    {
+      "File": "we202.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we202.png",
+      "Bytes": 38149
+    },
+    {
+      "File": "we203.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we203.png",
+      "Bytes": 39322
+    },
+    {
+      "File": "we204.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we204.png",
+      "Bytes": 38261
+    },
+    {
+      "File": "we205.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we205.png",
+      "Bytes": 37451
+    },
+    {
+      "File": "we206.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we206.png",
+      "Bytes": 39758
+    },
+    {
+      "File": "we207.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we207.png",
+      "Bytes": 42128
+    },
+    {
+      "File": "we208.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we208.png",
+      "Bytes": 36281
+    },
+    {
+      "File": "we209.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we209.png",
+      "Bytes": 40234
+    },
+    {
+      "File": "we21.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we21.png",
+      "Bytes": 26565
+    },
+    {
+      "File": "we210.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we210.png",
+      "Bytes": 37648
+    },
+    {
+      "File": "we211.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we211.png",
+      "Bytes": 38692
+    },
+    {
+      "File": "we212.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we212.png",
+      "Bytes": 34720
+    },
+    {
+      "File": "we213.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we213.png",
+      "Bytes": 43268
+    },
+    {
+      "File": "we214.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we214.png",
+      "Bytes": 42213
+    },
+    {
+      "File": "we215.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we215.png",
+      "Bytes": 27383
+    },
+    {
+      "File": "we22.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we22.png",
+      "Bytes": 34850
+    },
+    {
+      "File": "we23.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we23.png",
+      "Bytes": 23990
+    },
+    {
+      "File": "we25.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we25.png",
+      "Bytes": 33977
+    },
+    {
+      "File": "we26.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we26.png",
+      "Bytes": 26592
+    },
+    {
+      "File": "we27.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we27.png",
+      "Bytes": 38087
+    },
+    {
+      "File": "we28.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we28.png",
+      "Bytes": 28577
+    },
+    {
+      "File": "we29.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we29.png",
+      "Bytes": 44406
+    },
+    {
+      "File": "we3.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we3.png",
+      "Bytes": 24621
+    },
+    {
+      "File": "we30.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we30.png",
+      "Bytes": 23628
+    },
+    {
+      "File": "we32.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we32.png",
+      "Bytes": 28820
+    },
+    {
+      "File": "we33.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we33.png",
+      "Bytes": 28721
+    },
+    {
+      "File": "we34.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we34.png",
+      "Bytes": 30189
+    },
+    {
+      "File": "we35.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we35.png",
+      "Bytes": 27599
+    },
+    {
+      "File": "we36.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we36.png",
+      "Bytes": 26216
+    },
+    {
+      "File": "we37.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we37.png",
+      "Bytes": 28850
+    },
+    {
+      "File": "we39.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we39.png",
+      "Bytes": 26454
+    },
+    {
+      "File": "we4.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we4.png",
+      "Bytes": 25796
+    },
+    {
+      "File": "we40.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we40.png",
+      "Bytes": 22248
+    },
+    {
+      "File": "we41.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we41.png",
+      "Bytes": 24526
+    },
+    {
+      "File": "we42.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we42.png",
+      "Bytes": 25077
+    },
+    {
+      "File": "we43.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we43.png",
+      "Bytes": 34250
+    },
+    {
+      "File": "we44.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we44.png",
+      "Bytes": 27090
+    },
+    {
+      "File": "we46.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we46.png",
+      "Bytes": 38126
+    },
+    {
+      "File": "we47.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we47.png",
+      "Bytes": 41220
+    },
+    {
+      "File": "we49.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we49.png",
+      "Bytes": 31415
+    },
+    {
+      "File": "we5.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we5.png",
+      "Bytes": 35159
+    },
+    {
+      "File": "we50.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we50.png",
+      "Bytes": 37121
+    },
+    {
+      "File": "we51.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we51.png",
+      "Bytes": 24748
+    },
+    {
+      "File": "we52.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we52.png",
+      "Bytes": 33070
+    },
+    {
+      "File": "we53.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we53.png",
+      "Bytes": 8873
+    },
+    {
+      "File": "we54.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we54.png",
+      "Bytes": 29114
+    },
+    {
+      "File": "we55.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we55.png",
+      "Bytes": 34713
+    },
+    {
+      "File": "we56.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we56.png",
+      "Bytes": 25956
+    },
+    {
+      "File": "we57.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we57.png",
+      "Bytes": 33951
+    },
+    {
+      "File": "we58.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we58.png",
+      "Bytes": 20469
+    },
+    {
+      "File": "we6.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we6.png",
+      "Bytes": 29270
+    },
+    {
+      "File": "we61.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we61.png",
+      "Bytes": 27866
+    },
+    {
+      "File": "we64.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we64.png",
+      "Bytes": 23674
+    },
+    {
+      "File": "we65.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we65.png",
+      "Bytes": 26292
+    },
+    {
+      "File": "we67.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we67.png",
+      "Bytes": 26654
+    },
+    {
+      "File": "we68.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we68.png",
+      "Bytes": 32465
+    },
+    {
+      "File": "we69.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we69.png",
+      "Bytes": 29148
+    },
+    {
+      "File": "we7.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we7.png",
+      "Bytes": 28536
+    },
+    {
+      "File": "we70.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we70.png",
+      "Bytes": 39947
+    },
+    {
+      "File": "we71.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we71.png",
+      "Bytes": 8189
+    },
+    {
+      "File": "we74.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we74.png",
+      "Bytes": 28379
+    },
+    {
+      "File": "we75.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we75.png",
+      "Bytes": 42312
+    },
+    {
+      "File": "we76.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we76.png",
+      "Bytes": 27740
+    },
+    {
+      "File": "we77.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we77.png",
+      "Bytes": 45283
+    },
+    {
+      "File": "we79.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we79.png",
+      "Bytes": 40992
+    },
+    {
+      "File": "we8.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we8.png",
+      "Bytes": 26579
+    },
+    {
+      "File": "we80.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we80.png",
+      "Bytes": 31703
+    },
+    {
+      "File": "we81.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we81.png",
+      "Bytes": 26207
+    },
+    {
+      "File": "we84.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we84.png",
+      "Bytes": 27884
+    },
+    {
+      "File": "we85.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we85.png",
+      "Bytes": 22237
+    },
+    {
+      "File": "we86.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we86.png",
+      "Bytes": 39370
+    },
+    {
+      "File": "we87.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we87.png",
+      "Bytes": 42849
+    },
+    {
+      "File": "we9.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we9.png",
+      "Bytes": 27185
+    },
+    {
+      "File": "we90.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we90.png",
+      "Bytes": 27401
+    },
+    {
+      "File": "we91.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we91.png",
+      "Bytes": 36649
+    },
+    {
+      "File": "we92.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we92.png",
+      "Bytes": 29818
+    },
+    {
+      "File": "we94.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we94.png",
+      "Bytes": 24808
+    },
+    {
+      "File": "we96.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we96.png",
+      "Bytes": 32375
+    },
+    {
+      "File": "we97.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we97.png",
+      "Bytes": 40630
+    },
+    {
+      "File": "we98.png",
+      "Url": "https://img.gamewith.jp/article_tools/splatoon3/gacha/we98.png",
+      "Bytes": 33643
+    }
+  ],
+  "failed": []
+}
