@@ -49,6 +49,7 @@
       comebackActive: false,
       analyzerControlsOpen: true,
       weaponDetailsOpen: true,
+      rangeComparisonOpen: true,
       efficiencyTestOpen: true,
       mainShotCount: 5,
     };

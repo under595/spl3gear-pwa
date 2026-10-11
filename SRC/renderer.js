@@ -18,6 +18,7 @@ function render(root, state, actions) {
   root.append(
     renderWeaponBar(state, actions),
     renderPinnedResults(results, state, actions),
+    renderRangeComparison(state, actions),
     renderEfficiencyTest(state, actions),
     renderAnalyzerControls(state, actions),
     renderGearSetTabs(state, actions),
@@ -415,6 +416,55 @@ function mainDetailSummary(results) {
     mainInk ? `メイン1発 ${mainInk.value}` : "",
     range ? `射程 ${range.value}` : "",
   ].filter(Boolean).join(" / ");
+}
+
+function renderRangeComparison(state, actions) {
+  const isOpen = state.rangeComparisonOpen !== false;
+  const favorites = (state.favoriteWeapons || []).filter((name) => WEAPON_DATAS[name]);
+  const section = createElement("section", `range-comparison ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "射程対比" });
+  const header = createElement("div", "range-comparison-header");
+  header.append(createElement("strong", "", { text: "射程対比" }));
+  const summary = favorites.length ? `${favorites.length}ブキ` : "お気に入りなし";
+  header.append(createElement("span", "range-comparison-summary", { text: summary }));
+  const toggle = createElement("button", "detail-toggle", {
+    type: "button",
+    text: isOpen ? "閉じる" : "開く",
+    title: isOpen ? "射程対比を閉じる" : "射程対比を開く",
+    "aria-expanded": String(isOpen),
+  });
+  toggle.addEventListener("click", actions.toggleRangeComparison);
+  header.append(toggle);
+  section.append(header);
+  if (!isOpen) return section;
+
+  const list = createElement("div", "range-comparison-list");
+  if (!favorites.length) {
+    list.append(createElement("div", "range-comparison-empty", { text: "お気に入りに登録したブキがここに表示されます" }));
+  } else {
+    for (const weaponName of favorites) list.append(renderRangeComparisonRow(state, weaponName));
+  }
+  section.append(list);
+  return section;
+}
+
+function renderRangeComparisonRow(state, weaponName) {
+  const results = buildResults(state.slots, weaponName, {
+    ldeIntensity: state.ldeIntensity,
+    drinkActive: state.drinkActive,
+    comebackActive: state.comebackActive,
+    disabledSlots: state.disabledSlots,
+  });
+  const mainDamage = results.find((result) => result.name === "メインダメージ");
+  const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
+  const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
+  const row = createElement("article", "range-comparison-row");
+  const weapon = WEAPON_DATAS[weaponName];
+  row.append(iconImage(weapon && weapon.i, weaponName, "range-comparison-icon"));
+  row.append(createElement("strong", "range-comparison-name", { text: weaponName }));
+  row.append(createElement("span", "range-comparison-value", {
+    text: `${mainInk ? mainInk.value : "-"} / ${range ? range.value : "射程未登録"}`,
+  }));
+  return row;
 }
 
 function renderResults(results) {

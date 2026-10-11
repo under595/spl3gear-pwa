@@ -22,6 +22,7 @@
     setComebackActive(value) { state.comebackActive = Boolean(value); redraw(); },
     toggleAnalyzerControls() { state.analyzerControlsOpen = !state.analyzerControlsOpen; redraw(); },
     toggleWeaponDetails() { state.weaponDetailsOpen = !state.weaponDetailsOpen; redraw(); },
+    toggleRangeComparison() { state.rangeComparisonOpen = !state.rangeComparisonOpen; redraw(); },
     toggleEfficiencyTest() { state.efficiencyTestOpen = !state.efficiencyTestOpen; redraw(); },
     setMainShotCount(value) { state.mainShotCount = Math.max(1, Math.min(10, Number(value) || 5)); redraw(); },
     selectGearSet(index) { activateGearSet(state, index); redraw(); },
@@ -175,6 +176,7 @@
         comebackActive: current.comebackActive,
         analyzerControlsOpen: current.analyzerControlsOpen,
         weaponDetailsOpen: current.weaponDetailsOpen,
+        rangeComparisonOpen: current.rangeComparisonOpen,
         efficiencyTestOpen: current.efficiencyTestOpen,
         mainShotCount: current.mainShotCount,
       }));
@@ -199,6 +201,7 @@
       if (typeof saved.comebackActive === "boolean") current.comebackActive = saved.comebackActive;
       if (typeof saved.analyzerControlsOpen === "boolean") current.analyzerControlsOpen = saved.analyzerControlsOpen;
       if (typeof saved.weaponDetailsOpen === "boolean") current.weaponDetailsOpen = saved.weaponDetailsOpen;
+      if (typeof saved.rangeComparisonOpen === "boolean") current.rangeComparisonOpen = saved.rangeComparisonOpen;
       if (typeof saved.efficiencyTestOpen === "boolean") current.efficiencyTestOpen = saved.efficiencyTestOpen;
       if (Number.isFinite(Number(saved.mainShotCount))) current.mainShotCount = Math.max(1, Math.min(10, Number(saved.mainShotCount)));
     } catch (error) {
