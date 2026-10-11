@@ -402,11 +402,12 @@
       const specialPoint = Math.ceil(params.kit.SpecialPoint / effect);
       const paintPoint = mainPaintPoint(weaponName);
       const specialValues = [
-        { label: "基本", value: `${params.kit.SpecialPoint}P` },
-        { label: "スペ増後", value: `${specialPoint}P` },
+        { label: "必要P", value: `スペ増後${specialPoint}P/基本${params.kit.SpecialPoint}P` },
       ];
       if (paintPoint) {
-        specialValues.push({ label: "必要ショット", value: `${Math.ceil(specialPoint / paintPoint.p)}発` });
+        const boostedShots = Math.ceil(specialPoint / paintPoint.p);
+        const baseShots = Math.ceil(params.kit.SpecialPoint / paintPoint.p);
+        specialValues.push({ label: "必要ショット", value: `${boostedShots}発/${baseShots}発` });
       }
       results.push({
         type: "multi",
