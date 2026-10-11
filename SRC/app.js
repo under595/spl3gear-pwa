@@ -5,6 +5,8 @@
   const { addPowerToFirstAvailable, clearPart, movePowerToSlot, removeSlotPower, toggleSlotDisabled } = window.SPL3.operations;
   const { clearSlotValidity, markSlotValidity, render } = window.SPL3.renderer;
   const STORAGE_KEY = "spl3gear-simulator-state-v1";
+  const DRAG_START_DELAY_MS = 110;
+  const SLOT_LONG_PRESS_MS = 260;
 
   const root = document.querySelector("#gearSimulator");
   const defaultWeapon = WEAPON_DATAS["わかばシューター"] ? "わかばシューター" : Object.keys(WEAPON_DATAS)[0];
@@ -30,6 +32,7 @@
 
     pointerStart(event, source, powerName) {
       if (!powerName || event.pointerType === "mouse" && event.button !== 0) return;
+      clearPointerTimers();
       state.pointerDrag = {
         source,
         powerName,
@@ -38,20 +41,34 @@
         startY: event.clientY,
         active: false,
         hover: null,
+        handled: false,
       };
+      if (source.kind === "pool") {
+        state.pointerDrag.dragTimer = setTimeout(() => {
+          const drag = state.pointerDrag;
+          if (!drag || drag.pointerId !== event.pointerId || drag.handled) return;
+          startPointerDrag(drag, event.clientX, event.clientY);
+        }, DRAG_START_DELAY_MS);
+      }
+      if (source.kind === "slot") {
+        state.pointerDrag.longPressTimer = setTimeout(() => {
+          const drag = state.pointerDrag;
+          if (!drag || drag.pointerId !== event.pointerId || drag.active || drag.handled) return;
+          drag.handled = true;
+          state.lastPointerDropAt = Date.now();
+          actions.pointerCancel(event);
+          toggleSlotDisabled(state, source.slot);
+          redraw();
+        }, SLOT_LONG_PRESS_MS);
+      }
     },
 
     pointerMove(event) {
       const drag = state.pointerDrag;
       if (!drag || drag.pointerId !== event.pointerId) return;
       const moved = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY);
-      if (!drag.active && moved < 8) return;
-      if (!drag.active) {
-        drag.active = true;
-        state.drag = { ...drag.source, powerName: drag.powerName };
-        root.classList.add("is-touch-dragging");
-        markSlotValidity(root, drag.powerName);
-      }
+      if (!drag.active && moved < 4) return;
+      if (!drag.active) startPointerDrag(drag, event.clientX, event.clientY);
       event.preventDefault();
       updatePointerGhost(drag.powerName, event.clientX, event.clientY);
       const slotEl = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(".gear-slot");
@@ -66,6 +83,7 @@
     pointerEnd(event) {
       const drag = state.pointerDrag;
       if (!drag || drag.pointerId !== event.pointerId) return;
+      clearPointerTimers();
       const wasActive = Boolean(drag.active);
       const slotEl = wasActive ? document.elementFromPoint(event.clientX, event.clientY)?.closest?.(".gear-slot") : null;
       state.pointerDrag = null;
@@ -87,6 +105,7 @@
     pointerCancel(event) {
       const drag = state.pointerDrag;
       if (!drag || drag.pointerId !== event.pointerId) return;
+      clearPointerTimers();
       state.pointerDrag = null;
       state.drag = null;
       root.classList.remove("is-touch-dragging");
@@ -242,6 +261,23 @@
     if (favorites.has(weaponName)) favorites.delete(weaponName);
     else favorites.add(weaponName);
     current.favoriteWeapons = [...favorites].filter((name) => WEAPON_DATAS[name]);
+  }
+
+  function startPointerDrag(drag, x, y) {
+    clearPointerTimers();
+    drag.active = true;
+    state.drag = { ...drag.source, powerName: drag.powerName };
+    root.classList.add("is-touch-dragging");
+    markSlotValidity(root, drag.powerName);
+    updatePointerGhost(drag.powerName, x, y);
+  }
+
+  function clearPointerTimers() {
+    if (!state.pointerDrag) return;
+    clearTimeout(state.pointerDrag.dragTimer);
+    clearTimeout(state.pointerDrag.longPressTimer);
+    state.pointerDrag.dragTimer = null;
+    state.pointerDrag.longPressTimer = null;
   }
 
   function readSlotFromElement(el) {

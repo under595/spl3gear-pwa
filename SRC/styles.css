@@ -589,6 +589,15 @@ button { cursor: pointer; }
   touch-action: none;
 }
 
+.app-version {
+  margin: 14px 0 4px;
+  color: #bdbdbd;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 1px 0 #000;
+}
+
 .pinned-result-group,
 .pinned-result-list,
 .result-list {

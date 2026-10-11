@@ -5,6 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メインダメージ", "サブダメージ", "スペシャル必要P", "スペシャル性能"];
+  const APP_VERSION = "Ver1.02";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -22,7 +23,8 @@ function render(root, state, actions) {
     renderGearSetTabs(state, actions),
     renderGearInput(state, actions),
     renderPowerPool(state, actions),
-    renderResults(results)
+    renderResults(results),
+    renderAppVersion()
   );
 }
 
@@ -455,6 +457,10 @@ function markSlotValidity(root, powerName) {
 
 function clearSlotValidity(root) {
   for (const el of root.querySelectorAll(".gear-slot")) el.classList.remove("can-drop", "cannot-drop", "drop-hover");
+}
+
+function renderAppVersion() {
+  return createElement("footer", "app-version", { text: APP_VERSION });
 }
   window.SPL3 = window.SPL3 || {};
   window.SPL3.renderer = { render, markSlotValidity, clearSlotValidity };
