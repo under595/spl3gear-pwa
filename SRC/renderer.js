@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.07";
+  const APP_VERSION = "Ver1.08";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -411,10 +411,10 @@ function renderPinnedResults(results, state, actions) {
 function mainDetailSummary(results) {
   const mainDamage = results.find((result) => result.name === "メイン");
   const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
-  const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
+  const range = findRangeValue(mainDamage);
   return [
     mainInk ? `メイン1発 ${mainInk.value}` : "",
-    range ? `射程 ${range.value}` : "",
+    range ? `${range.label} ${range.value}` : "",
   ].filter(Boolean).join(" / ");
 }
 
@@ -456,7 +456,7 @@ function renderRangeComparisonRow(state, weaponName) {
   });
   const mainDamage = results.find((result) => result.name === "メイン");
   const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
-  const range = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "射程");
+  const range = findRangeValue(mainDamage);
   const row = createElement("article", "range-comparison-row");
   const weapon = WEAPON_DATAS[weaponName];
   row.append(iconImage(weapon && weapon.i, weaponName, "range-comparison-icon"));
@@ -465,6 +465,10 @@ function renderRangeComparisonRow(state, weaponName) {
     text: `${mainInk ? mainInk.value : "-"} / ${range ? range.value : "射程未登録"}`,
   }));
   return row;
+}
+
+function findRangeValue(result) {
+  return result && result.values && result.values.find((item) => item.label && item.label.includes("射程"));
 }
 
 function renderResults(results) {
