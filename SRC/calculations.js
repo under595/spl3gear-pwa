@@ -154,6 +154,149 @@
     "ソイチューバー": { p: 24.0, f: 77 }, "ソイチューバーカスタム": { p: 24.0, f: 77 },
     "R-PEN/5H": { p: 16.0, f: 146, shotsPerAction: 5 }, "R-PEN/5B": { p: 16.0, f: 146, shotsPerAction: 5 },
   };
+  const MAIN_KILL_TIMES = {
+    "ボールドマーカー": [{ mode: "通常", hit: 11, human: 14, squid: 21, sec: 0.233 }],
+    "わかばシューター": [{ mode: "通常", hit: 16, human: 19, squid: 26, sec: 0.317 }],
+    "シャープマーカー": [{ mode: "通常", hit: 16, human: 19, squid: 27, sec: 0.317 }],
+    "プロモデラーMG": [{ mode: "通常", hit: 17, human: 20, squid: 27, sec: 0.333 }],
+    "スプラシューター": [{ mode: "通常", hit: 13, human: 16, squid: 24, sec: 0.267 }],
+    "52ガロン": [{ mode: "通常", hit: 10, human: 13, squid: 21, sec: 0.217 }],
+    "N-ZAP85": [{ mode: "通常", hit: 16, human: 19, squid: 27, sec: 0.317 }],
+    "プライムシューター": [{ mode: "通常", hit: 17, human: 20, squid: 28, sec: 0.333 }],
+    "96ガロン": [{ mode: "通常", hit: 13, human: 16, squid: 24, sec: 0.267 }],
+    "ジェットスイーパー": [{ mode: "通常", hit: 25, human: 28, squid: 36, sec: 0.467 }],
+    "スペースシューター": [{ mode: "通常", hit: 25, human: 28, squid: 36, sec: 0.467 }],
+    "ノヴァブラスター": [{ mode: "直撃", hit: 1, human: 14, squid: 24, sec: 0.233 }, { mode: "爆風", hit: 41, human: 54, squid: 64, sec: 0.900 }],
+    "ホットブラスター": [{ mode: "直撃", hit: 1, human: 14, squid: 24, sec: 0.233 }, { mode: "爆風", hit: 51, human: 64, squid: 74, sec: 1.067 }],
+    "ロングブラスター": [{ mode: "直撃", hit: 1, human: 14, squid: 24, sec: 0.233 }, { mode: "爆風", hit: 61, human: 74, squid: 84, sec: 1.233 }],
+    "クラッシュブラスター": [{ mode: "直撃", hit: 21, human: 32, squid: 40, sec: 0.533 }, { mode: "爆風", hit: 61, human: 72, squid: 80, sec: 1.200 }],
+    "ラピッドブラスター": [{ mode: "直撃", hit: 36, human: 47, squid: 55, sec: 0.783 }, { mode: "爆風", hit: 71, human: 82, squid: 90, sec: 1.367 }],
+    "Rブラスターエリート": [{ mode: "直撃", hit: 41, human: 52, squid: 61, sec: 0.867 }, { mode: "爆風", hit: 81, human: 92, squid: 101, sec: 1.533 }],
+    "S-BLAST92": [{ mode: "直撃", hit: 1, human: 14, squid: 24, sec: 0.233 }, { mode: "爆風", hit: 56, human: 69, squid: 79, sec: 1.150 }],
+    "L3リールガン": [{ mode: "通常", hit: 19, human: 22, squid: 31, sec: 0.367 }],
+    "H3リールガン": [{ mode: "通常", hit: 11, human: 14, squid: 23, sec: 0.233 }, { mode: "1発外し", hit: 33, human: 36, squid: 45, sec: 0.600 }],
+    "ボトルガイザー": [{ mode: "初弾のみ", hit: 17, human: 20, squid: 29, sec: 0.333 }, { mode: "連射のみ", hit: 22, human: null, squid: null, sec: 0.367 }, { mode: "初弾+連射", hit: 25, human: 28, squid: 37, sec: 0.467 }, { mode: "初+初+連", hit: 19, human: 22, squid: 31, sec: 0.367 }],
+    "スプラローラー": [{ mode: "横", hit: 1, human: 23, squid: 36, sec: 0.383 }, { mode: "縦", hit: 1, human: 33, squid: 46, sec: 0.550 }],
+    "ダイナモローラー": [{ mode: "横", hit: 1, human: 47, squid: 60, sec: 0.783 }, { mode: "縦", hit: 1, human: 62, squid: 75, sec: 1.033 }],
+    "ヴァリアブルローラー": [{ mode: "横", hit: 1, human: 21, squid: 34, sec: 0.350 }, { mode: "縦", hit: 1, human: 52, squid: 65, sec: 0.867 }],
+    "パブロ": [{ mode: "振り", hit: 21, human: 25, squid: 35, sec: 0.417 }],
+    "ホクサイ": [{ mode: "振り", hit: 22, human: 26, squid: 36, sec: 0.433 }],
+    "フィンセント": [{ mode: "振り", hit: 14, human: 40, squid: 49, sec: 0.667 }],
+    "バケットスロッシャー": [{ mode: "通常", hit: 30, human: 43, squid: 49, sec: 0.717 }],
+    "ヒッセン": [{ mode: "通常", hit: 24, human: 37, squid: 43, sec: 0.617 }],
+    "スクリュースロッシャー": [{ mode: "直撃", hit: 39, human: 52, squid: 58, sec: 0.867 }, { mode: "渦", hit: 77, human: 91, squid: 97, sec: 1.517 }],
+    "オーバーフロッシャー": [{ mode: "通常", hit: 16, human: 23, squid: 29, sec: 0.383 }],
+    "エクスプロッシャー": [{ mode: "直撃", hit: 56, human: 73, squid: 79, sec: 1.217 }, { mode: "爆風", hit: 111, human: 129, squid: 135, sec: 2.150 }, { mode: "直撃+爆風", hit: 56, human: 73, squid: 79, sec: 1.217 }],
+    "モップリン": [{ mode: "通常", hit: 46, human: 63, squid: 69, sec: 1.050 }],
+    "スクイックリンα": [{ mode: "FC", hit: 1, human: 49, squid: 54, sec: 0.817 }, { mode: "CK", hit: 1, human: null, squid: 29, sec: 0.483 }],
+    "スプラチャージャー": [{ mode: "FC", hit: 1, human: 64, squid: 69, sec: 1.067 }, { mode: "CK", hit: 1, human: null, squid: 33, sec: 0.550 }],
+    "リッター4K": [{ mode: "FC", hit: 1, human: 96, squid: 101, sec: 1.600 }, { mode: "CK", hit: 1, human: null, squid: 33, sec: 0.550 }],
+    "14式竹筒銃・甲": [{ mode: "FC", hit: 27, human: 50, squid: 55, sec: 0.833 }, { mode: "NC", hit: 43, human: 54, squid: 59, sec: 0.900 }, { mode: "FC+NC", hit: 15, human: 38, squid: 43, sec: 0.633 }, { mode: "13fC", hit: 20, human: 36, squid: 41, sec: 0.600 }, { mode: "17fC+NC", hit: 15, human: 35, squid: 40, sec: 0.583 }],
+    "ソイチューバー": [{ mode: "FC", hit: 1, human: 75, squid: 80, sec: 1.250 }, { mode: "1周C", hit: 1, human: 54, squid: 59, sec: 0.900 }, { mode: "FCK", hit: 1, human: null, squid: 25, sec: 0.417 }],
+    "R-PEN/5H": [{ mode: "FC", hit: 18, human: 93, squid: 98, sec: 1.550 }, { mode: "FC+NC", hit: 15, human: 158, squid: 163, sec: 2.633 }],
+    "スプラスピナー": [{ mode: "FC", hit: 13, human: 43, squid: 48, sec: 0.717 }, { mode: "最小限C", hit: 13, human: 27, squid: 32, sec: 0.450 }],
+    "バレルスピナー": [{ mode: "FC", hit: 13, human: 88, squid: 93, sec: 1.467 }, { mode: "最小限C", hit: 13, human: 30, squid: 35, sec: 0.500 }],
+    "ハイドラント": [{ mode: "FC", hit: 9, human: 162, squid: 167, sec: 2.700 }, { mode: "最小限C", hit: 13, human: 35, squid: 40, sec: 0.583 }],
+    "クーゲルシュライバー": [{ mode: "FC長", hit: 16, human: 159, squid: 164, sec: 2.650 }, { mode: "21fC短", hit: 10, human: 34, squid: 39, sec: 0.567 }, { mode: "最小限C", hit: 10, human: 24, squid: 29, sec: 0.400 }],
+    "ノーチラス47": [{ mode: "FC", hit: 13, human: 92, squid: 97, sec: 1.533 }, { mode: "最小限C", hit: 13, human: 30, squid: 35, sec: 0.500 }, { mode: "CK", hit: 13, human: null, squid: 32, sec: 0.533 }],
+    "イグザミナー": [{ mode: "FC", hit: 10, human: 133, squid: 138, sec: 2.217 }, { mode: "最小限C", hit: 13, human: 29, squid: 34, sec: 0.483 }],
+    "スパッタリー": [{ mode: "N", hit: 11, human: 14, squid: 23, sec: 0.233 }, { mode: "SL", hit: 9, human: 28, squid: 28, sec: 0.467 }],
+    "スプラマニューバー": [{ mode: "N", hit: 16, human: 19, squid: 28, sec: 0.317 }, { mode: "SL", hit: 13, human: 36, squid: 36, sec: 0.600 }],
+    "ケルビン525": [{ mode: "N", hit: 19, human: 22, squid: 31, sec: 0.367 }, { mode: "SL", hit: 10, human: 41, squid: 41, sec: 0.683 }],
+    "デュアルスイーパー": [{ mode: "N", hit: 19, human: 22, squid: 31, sec: 0.367 }, { mode: "SL", hit: 19, human: 46, squid: 46, sec: 0.767 }],
+    "クアッドホッパーブラック": [{ mode: "N", hit: 19, human: 22, squid: 31, sec: 0.367 }, { mode: "ヒトSL", hit: 19, human: 28, squid: null, sec: 0.467 }, { mode: "イカSL", hit: 18, human: null, squid: 30, sec: 0.500 }, { mode: "SL後", hit: 16, human: 43, squid: 40, sec: 0.717 }],
+    "ガエンFF": [{ mode: "N", hit: 25, human: 28, squid: 37, sec: 0.467 }, { mode: "SL", hit: 13, human: 42, squid: 42, sec: 0.700 }],
+    "パラシェルター": [{ mode: "通常", hit: 30, human: 41, squid: 53, sec: 0.683 }, { mode: "射撃+傘", hit: 14, human: 25, squid: 37, sec: 0.417 }],
+    "キャンピングシェルター": [{ mode: "通常", hit: 1, human: 14, squid: 29, sec: 0.233 }],
+    "スパイガジェット": [{ mode: "単発", hit: 59, human: 70, squid: 82, sec: 1.167 }, { mode: "連射", hit: 53, human: null, squid: null, sec: 0.883 }, { mode: "単発+連射", hit: 52, human: 63, squid: 75, sec: 1.050 }, { mode: "単+傘+連+傘", hit: 42, human: 53, squid: 65, sec: 0.883 }],
+    "24式張替傘・甲": [{ mode: "通常", hit: 35, human: 46, squid: 58, sec: 0.767 }, { mode: "射撃+傘", hit: 12, human: 23, squid: 35, sec: 0.383 }],
+    "トライストリンガー": [{ mode: "FC", hit: 1, human: 76, squid: 81, sec: 1.267 }, { mode: "1周C", hit: 1, human: 34, squid: 39, sec: 0.567 }, { mode: "NC", hit: 22, human: 34, squid: 39, sec: 0.567 }, { mode: "FC爆", hit: 88, human: 209, squid: 214, sec: 3.483 }, { mode: "1周爆", hit: 46, human: 125, squid: 130, sec: 2.083 }],
+    "LACT-450": [{ mode: "FC", hit: 1, human: 38, squid: 43, sec: 0.633 }, { mode: "1周C", hit: 1, human: 16, squid: 21, sec: 0.267 }, { mode: "NC", hit: 15, human: 24, squid: 29, sec: 0.400 }, { mode: "CK", hit: 1, human: null, squid: 29, sec: 0.483 }],
+    "フルイドV": [{ mode: "FC", hit: 1, human: 84, squid: 89, sec: 1.400 }, { mode: "1周C", hit: 1, human: 44, squid: 49, sec: 0.733 }, { mode: "NC", hit: 1, human: 16, squid: 21, sec: 0.267 }, { mode: "FC爆", hit: 1, human: 130, squid: 135, sec: 2.167 }, { mode: "1周C爆", hit: 1, human: 90, squid: 95, sec: 1.500 }],
+    "ジムワイパー": [{ mode: "FC", hit: 1, human: 26, squid: 31, sec: 0.433 }, { mode: "FC弾", hit: 43, human: 71, squid: 76, sec: 1.183 }, { mode: "踏みFC", hit: 1, human: 38, squid: 43, sec: 0.633 }, { mode: "NC", hit: 30, human: 39, squid: 44, sec: 0.650 }, { mode: "NC弾", hit: 53, human: 65, squid: 70, sec: 1.083 }, { mode: "FC弾+NC弾", hit: 27, human: 55, squid: 60, sec: 0.917 }, { mode: "NC弾+FC弾", hit: 44, human: 56, squid: 61, sec: 0.933 }],
+    "ドライブワイパー": [{ mode: "FC", hit: 1, human: 20, squid: 25, sec: 0.333 }, { mode: "FC弾", hit: 37, human: 59, squid: 64, sec: 0.983 }, { mode: "踏みFC", hit: 1, human: 31, squid: 36, sec: 0.517 }, { mode: "NC", hit: 33, human: 39, squid: 44, sec: 0.650 }, { mode: "NC弾", hit: 49, human: 58, squid: 63, sec: 0.967 }, { mode: "FC弾+NC弾+NC弾", hit: 40, human: 62, squid: 67, sec: 1.033 }, { mode: "NC弾+NC弾+FC弾", hit: 47, human: 56, squid: 61, sec: 0.933 }],
+    "デンタルワイパー": [{ mode: "FC", hit: 1, human: 43, squid: 48, sec: 0.717 }, { mode: "FC弾", hit: 53, human: 98, squid: 103, sec: 1.633 }, { mode: "踏みFC", hit: 1, human: 57, squid: 62, sec: 0.950 }, { mode: "NC", hit: 31, human: 43, squid: 48, sec: 0.717 }, { mode: "NC弾", hit: 61, human: 76, squid: 81, sec: 1.267 }, { mode: "FC弾+NC弾", hit: 23, human: 68, squid: 73, sec: 1.133 }, { mode: "NC弾+FC弾", hit: 62, human: 77, squid: 82, sec: 1.283 }],
+  };
+  const MAIN_KILL_ALIASES = {
+    "もみじシューター": "わかばシューター",
+    "ボールドマーカーネオ": "ボールドマーカー",
+    "シャープマーカーネオ": "シャープマーカー",
+    "スプラシューターコラボ": "スプラシューター",
+    "ヒーローシューターレプリカ": "スプラシューター",
+    "オーダーシューターレプリカ": "スプラシューター",
+    "N-ZAP89": "N-ZAP85",
+    "プロモデラーRG": "プロモデラーMG",
+    "52ガロンデコ": "52ガロン",
+    "96ガロンデコ": "96ガロン",
+    "プライムシューターコラボ": "プライムシューター",
+    "ジェットスイーパーカスタム": "ジェットスイーパー",
+    "スペースシューターコラボ": "スペースシューター",
+    "ノヴァブラスターネオ": "ノヴァブラスター",
+    "ホットブラスターカスタム": "ホットブラスター",
+    "ロングブラスターカスタム": "ロングブラスター",
+    "クラッシュブラスターネオ": "クラッシュブラスター",
+    "ラピッドブラスターデコ": "ラピッドブラスター",
+    "Rブラスターエリートデコ": "Rブラスターエリート",
+    "S-BLAST91": "S-BLAST92",
+    "L3リールガンD": "L3リールガン",
+    "H3リールガンD": "H3リールガン",
+    "スプラローラーコラボ": "スプラローラー",
+    "ダイナモローラーテスラ": "ダイナモローラー",
+    "ヴァリアブルローラーフォイル": "ヴァリアブルローラー",
+    "パブロ・ヒュー": "パブロ",
+    "パブロヒュー": "パブロ",
+    "ホクサイ・ヒュー": "ホクサイ",
+    "ホクサイヒュー": "ホクサイ",
+    "バケットスロッシャーデコ": "バケットスロッシャー",
+    "ヒッセン・ヒュー": "ヒッセン",
+    "ヒッセンヒュー": "ヒッセン",
+    "スクリュースロッシャーネオ": "スクリュースロッシャー",
+    "オーバーフロッシャーデコ": "オーバーフロッシャー",
+    "エクスプロッシャーカスタム": "エクスプロッシャー",
+    "モップリンD": "モップリン",
+    "スクイックリンβ": "スクイックリンα",
+    "スプラチャージャーコラボ": "スプラチャージャー",
+    "スプラスコープ": "スプラチャージャー",
+    "スプラスコープコラボ": "スプラチャージャー",
+    "リッター4Kカスタム": "リッター4K",
+    "4Kスコープ": "リッター4K",
+    "4Kスコープカスタム": "リッター4K",
+    "14式竹筒銃・乙": "14式竹筒銃・甲",
+    "ソイチューバーカスタム": "ソイチューバー",
+    "R-PEN/5B": "R-PEN/5H",
+    "スプラスピナーコラボ": "スプラスピナー",
+    "バレルスピナーデコ": "バレルスピナー",
+    "ハイドラントカスタム": "ハイドラント",
+    "クーゲルシュライバー・ヒュー": "クーゲルシュライバー",
+    "クーゲルシュライバーヒュー": "クーゲルシュライバー",
+    "ノーチラス79": "ノーチラス47",
+    "イグザミナー・ヒュー": "イグザミナー",
+    "イグザミナーヒュー": "イグザミナー",
+    "スパッタリー・ヒュー": "スパッタリー",
+    "スパッタリーヒュー": "スパッタリー",
+    "スプラマニューバーコラボ": "スプラマニューバー",
+    "オーダーマニューバーレプリカ": "スプラマニューバー",
+    "ケルビン525デコ": "ケルビン525",
+    "デュアルスイーパーカスタム": "デュアルスイーパー",
+    "クアッドホッパーホワイト": "クアッドホッパーブラック",
+    "ガエンFFカスタム": "ガエンFF",
+    "パラシェルターソレーラ": "パラシェルター",
+    "オーダーシェルターレプリカ": "パラシェルター",
+    "キャンピングシェルターソレーラ": "キャンピングシェルター",
+    "スパイガジェットソレーラ": "スパイガジェット",
+    "24式張替傘・乙": "24式張替傘・甲",
+    "トライストリンガーコラボ": "トライストリンガー",
+    "オーダーストリンガーレプリカ": "トライストリンガー",
+    "LACT450": "LACT-450",
+    "LACT-450デコ": "LACT-450",
+    "フルイドⅤ": "フルイドV",
+    "フルイドⅤカスタム": "フルイドV",
+    "ジムワイパー・ヒュー": "ジムワイパー",
+    "ジムワイパーヒュー": "ジムワイパー",
+    "ドライブワイパーデコ": "ドライブワイパー",
+    "デンタルワイパーミント": "デンタルワイパー",
+    "デンタルワイパースミ": "デンタルワイパー",
+  };
   const MAIN_RANGE_LINES = {
     "4Kスコープ": 6.5, "4Kスコープカスタム": 6.5,
     "リッター4K": 6.2, "リッター4Kカスタム": 6.2,
@@ -452,8 +595,11 @@
     const damages = collectDamageValues(params.main).slice(0, 3);
     if (damages.length) {
       const mainDamageValues = damages.map((item) => ({ label: item.label, value: `${formatNumber(item.value / 10, 1)}` }));
-      const killSpeed = mainKillSpeed(damages[0].value, weaponName);
-      if (killSpeed) mainDamageValues.push({ label: "キル速", value: killSpeed });
+      const killTimes = mainKillTimes(weaponName);
+      if (killTimes) {
+        mainDamageValues.push({ label: "キル速", value: formatKillTime(killTimes.best) });
+        if (killTimes.others.length) mainDamageValues.push({ label: "他キル", value: killTimes.others.map(formatKillTime).join(" / ") });
+      }
       const paintPoint = mainPaintPoint(weaponName);
       if (paintPoint) mainDamageValues.push({ label: "塗P/発", value: `${formatNumber(paintPoint.p, 1)}P` });
       if (mainCost !== undefined) {
@@ -773,13 +919,26 @@
     return MAIN_PAINT_POINTS[weaponName] ?? MAIN_PAINT_POINTS[normalizeWeaponName(weaponName)] ?? null;
   }
 
-  function mainKillSpeed(rawDamage, weaponName) {
-    const paintPoint = mainPaintPoint(weaponName);
-    if (!paintPoint || !rawDamage) return null;
-    const damage = rawDamage / 10;
-    const shots = Math.ceil(100 / Math.max(0.1, damage));
-    const frames = Math.max(0, (shots - 1) * paintPoint.f);
-    return `${frames}F/${formatNumber(frames / 60, 2)}秒`;
+  function mainKillTimes(weaponName) {
+    const key = MAIN_KILL_ALIASES[weaponName] ?? MAIN_KILL_ALIASES[normalizeWeaponName(weaponName)] ?? weaponName;
+    const entries = MAIN_KILL_TIMES[key] ?? MAIN_KILL_TIMES[normalizeWeaponName(key)];
+    if (!entries || !entries.length) return null;
+    const ranked = entries.slice().sort((a, b) => killRankFrame(a) - killRankFrame(b));
+    return { best: ranked[0], others: ranked.slice(1) };
+  }
+
+  function killRankFrame(entry) {
+    if (Number.isFinite(entry.human)) return entry.human;
+    if (Number.isFinite(entry.squid)) return entry.squid;
+    if (Number.isFinite(entry.hit)) return entry.hit;
+    return Infinity;
+  }
+
+  function formatKillTime(entry) {
+    const label = entry.mode && entry.mode !== "通常" ? `${entry.mode} ` : "";
+    const frame = killRankFrame(entry);
+    const sec = Number.isFinite(entry.sec) ? entry.sec : frame / 60;
+    return `${label}${frame}F/${formatNumber(sec, 3)}秒`;
   }
 
   function normalizeWeaponName(name) {
