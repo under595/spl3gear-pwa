@@ -54,11 +54,15 @@ function renderEfficiencyTest(state, actions) {
     disabledSlots: state.disabledSlots,
   });
   const isOpen = state.efficiencyTestOpen !== false;
-  const section = createElement("section", `efficiency-test ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "効率テストグループ" });
+  const section = createElement("section", `efficiency-test ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "効率" });
   const header = createElement("div", "efficiency-header");
-  header.append(createElement("strong", "", { text: "効率テストグループ" }));
+  header.append(createElement("strong", "", { text: "効率" }));
 
   const headerControls = createElement("div", "efficiency-header-controls");
+  const subRemainingText = efficiencySubRemainingText(data);
+  if (subRemainingText && !isOpen) {
+    headerControls.append(createElement("span", "efficiency-summary", { text: subRemainingText }));
+  }
   if (isOpen) {
     const picker = createElement("label", "main-shot-picker");
     picker.append(createElement("span", "", { text: "メイン発射数" }));
@@ -78,7 +82,7 @@ function renderEfficiencyTest(state, actions) {
   const toggle = createElement("button", "detail-toggle", {
     type: "button",
     text: isOpen ? "閉じる" : "開く",
-    title: isOpen ? "効率テストグループを閉じる" : "効率テストグループを開く",
+    title: isOpen ? "効率を閉じる" : "効率を開く",
     "aria-expanded": String(isOpen),
   });
   toggle.addEventListener("click", actions.toggleEfficiencyTest);
@@ -97,12 +101,17 @@ function renderEfficiencyTest(state, actions) {
   rows.append(renderEfficiencyRow(data.main));
   if (data.sub) rows.append(renderEfficiencyRow(data.sub));
   section.append(rows);
-  if (data.subRemaining) {
+  if (subRemainingText) {
     section.append(createElement("div", "sub-remaining-summary", {
-      text: `サブ投擲後のインク残量${formatDisplayNumber(data.subRemaining.percent, 2)}%（メイン${data.subRemaining.mainShots}発/MAX${data.subRemaining.mainMaxShots}発）`,
+      text: subRemainingText,
     }));
   }
   return section;
+}
+
+function efficiencySubRemainingText(data) {
+  if (!data || !data.subRemaining) return "";
+  return `サブ投擲後のインク残量${formatDisplayNumber(data.subRemaining.percent, 2)}%（メイン${data.subRemaining.mainShots}発/MAX${data.subRemaining.mainMaxShots}発）`;
 }
 
 function renderEfficiencyRow(entry) {
