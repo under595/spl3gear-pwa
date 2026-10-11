@@ -208,7 +208,7 @@
     "ガエンFF": [{ mode: "N", hit: 25, human: 28, squid: 37, sec: 0.467 }, { mode: "SL", hit: 13, human: 42, squid: 42, sec: 0.700 }],
     "パラシェルター": [{ mode: "通常", hit: 30, human: 41, squid: 53, sec: 0.683 }, { mode: "射撃+傘", hit: 14, human: 25, squid: 37, sec: 0.417 }],
     "キャンピングシェルター": [{ mode: "通常", hit: 1, human: 14, squid: 29, sec: 0.233 }],
-    "スパイガジェット": [{ mode: "単発", hit: 59, human: 70, squid: 82, sec: 1.167 }, { mode: "連射", hit: 53, human: null, squid: null, sec: 0.883 }, { mode: "単発+連射", hit: 52, human: 63, squid: 75, sec: 1.050 }, { mode: "単+傘+連+傘", hit: 42, human: 53, squid: 65, sec: 0.883 }],
+    "スパイガジェット": [{ mode: "確定3: 単発", hit: 59, human: 70, squid: 82, sec: 1.167, hits: 3 }, { mode: "確定3: 単発→連射", hit: 52, human: 63, squid: 75, sec: 1.050, hits: 3 }],
     "24式張替傘・甲": [{ mode: "通常", hit: 35, human: 46, squid: 58, sec: 0.767 }, { mode: "射撃+傘", hit: 12, human: 23, squid: 35, sec: 0.383 }],
     "トライストリンガー": [{ mode: "FC", hit: 1, human: 76, squid: 81, sec: 1.267 }, { mode: "1周C", hit: 1, human: 34, squid: 39, sec: 0.567 }, { mode: "NC", hit: 22, human: 34, squid: 39, sec: 0.567 }, { mode: "FC爆", hit: 88, human: 209, squid: 214, sec: 3.483 }, { mode: "1周爆", hit: 46, human: 125, squid: 130, sec: 2.083 }],
     "LACT-450": [{ mode: "FC", hit: 1, human: 38, squid: 43, sec: 0.633 }, { mode: "1周C", hit: 1, human: 16, squid: 21, sec: 0.267 }, { mode: "NC", hit: 15, human: 24, squid: 29, sec: 0.400 }, { mode: "CK", hit: 1, human: null, squid: 29, sec: 0.483 }],
@@ -923,8 +923,16 @@
     const key = MAIN_KILL_ALIASES[weaponName] ?? MAIN_KILL_ALIASES[normalizeWeaponName(weaponName)] ?? weaponName;
     const entries = MAIN_KILL_TIMES[key] ?? MAIN_KILL_TIMES[normalizeWeaponName(key)];
     if (!entries || !entries.length) return null;
-    const ranked = entries.slice().sort((a, b) => killRankFrame(a) - killRankFrame(b));
+    const displayEntries = filterLowestHitCount(entries);
+    const ranked = displayEntries.slice().sort((a, b) => killRankFrame(a) - killRankFrame(b));
     return { best: ranked[0], others: ranked.slice(1) };
+  }
+
+  function filterLowestHitCount(entries) {
+    const counts = entries.map((entry) => entry.hits).filter(Number.isFinite);
+    if (!counts.length) return entries;
+    const minHits = Math.min(...counts);
+    return entries.filter((entry) => !Number.isFinite(entry.hits) || entry.hits === minHits);
   }
 
   function killRankFrame(entry) {
