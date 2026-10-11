@@ -31,6 +31,7 @@
     removeSlot(slot) { removeSlotPower(state, slot); redraw(); },
     toggleSlotDisabled(slot) { toggleSlotDisabled(state, slot); redraw(); },
     togglePool() { state.poolVisible = !state.poolVisible; redraw(); },
+    refreshApp() { refreshApp(); },
 
     pointerStart(event, source, powerName) {
       if (!powerName || event.pointerType === "mouse" && event.button !== 0) return;
@@ -267,6 +268,25 @@
     if (favorites.has(weaponName)) favorites.delete(weaponName);
     else favorites.add(weaponName);
     current.favoriteWeapons = [...favorites].filter((name) => WEAPON_DATAS[name]);
+  }
+
+  async function refreshApp() {
+    try {
+      if (window.caches) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+      }
+      if (navigator.serviceWorker) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+    } catch (error) {
+      console.warn("Failed to clear app cache", error);
+    } finally {
+      const url = new URL(location.href);
+      url.searchParams.set("refresh", String(Date.now()));
+      location.replace(url.toString());
+    }
   }
 
   function startPointerDrag(drag, x, y) {

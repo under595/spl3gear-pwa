@@ -25,7 +25,7 @@ function render(root, state, actions) {
     renderGearInput(state, actions),
     renderPowerPool(state, actions),
     renderResults(results),
-    renderAppVersion()
+    renderAppVersion(actions)
   );
 }
 
@@ -547,8 +547,17 @@ function clearSlotValidity(root) {
   for (const el of root.querySelectorAll(".gear-slot")) el.classList.remove("can-drop", "cannot-drop", "drop-hover");
 }
 
-function renderAppVersion() {
-  return createElement("footer", "app-version", { text: APP_VERSION });
+function renderAppVersion(actions) {
+  const footer = createElement("footer", "app-version");
+  footer.append(createElement("span", "", { text: APP_VERSION }));
+  const refresh = createElement("button", "app-refresh", {
+    type: "button",
+    text: "更新",
+    title: "キャッシュを消して最新版を読み込みます",
+  });
+  refresh.addEventListener("click", actions.refreshApp);
+  footer.append(refresh);
+  return footer;
 }
   window.SPL3 = window.SPL3 || {};
   window.SPL3.renderer = { render, markSlotValidity, clearSlotValidity };
