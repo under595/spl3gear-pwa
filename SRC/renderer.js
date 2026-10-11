@@ -20,10 +20,10 @@ function render(root, state, actions) {
     renderPinnedResults(results, state, actions),
     renderRangeComparison(state, actions),
     renderEfficiencyTest(state, actions),
-    renderAnalyzerControls(state, actions),
     renderGearSetTabs(state, actions),
     renderGearInput(state, actions),
     renderPowerPool(state, actions),
+    renderAnalyzerControls(state, actions),
     renderResults(results),
     renderAppVersion(actions)
   );
@@ -112,7 +112,7 @@ function renderEfficiencyTest(state, actions) {
 
 function efficiencySubRemainingText(data) {
   if (!data || !data.subRemaining) return "";
-  return `サブ投擲後のインク残量${formatDisplayNumber(data.subRemaining.percent, 2)}%（メイン${data.subRemaining.mainShots}発/MAX${data.subRemaining.mainMaxShots}発）`;
+  return `サブ後の残${formatDisplayNumber(data.subRemaining.percent, 2)}%（メイン${data.subRemaining.mainShots}発/MAX${data.subRemaining.mainMaxShots}発）`;
 }
 
 function renderEfficiencyRow(entry) {
