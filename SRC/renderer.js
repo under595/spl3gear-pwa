@@ -26,7 +26,7 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const APP_VERSION = "Ver1.38";
+  const APP_VERSION = "Ver1.39";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -504,7 +504,7 @@ function renderMapMarker(markerKey, marker, actions) {
   const markerType = normalizeMapMarkerId(marker.marker);
   const button = createElement("button", "map-marker", {
     type: "button",
-    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグでサイズ変更 / クリックで削除" : "ドラッグで移動 / クリックで削除",
+    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグで射線調整 / クリックで削除" : "ドラッグで移動 / クリックで削除",
     "aria-label": "マーカーを移動または削除",
     "data-marker-id": markerId,
   });
@@ -518,7 +518,7 @@ function renderMapMarker(markerKey, marker, actions) {
     const canvas = button.closest(".map-canvas");
     if (!canvas) return;
     if (event.button === 2 && markerType === "gun") {
-      resizeGunMarkerFromHandle(canvas, button, markerKey, marker, actions, event);
+      transformGunMarker(canvas, button, markerKey, marker, actions, event);
       return;
     }
     if (event.button !== undefined && event.button !== 0) return;
@@ -611,68 +611,64 @@ function renderGunMarkerSector(markerKey, marker, actions) {
     event.stopPropagation();
     const canvas = svg.closest(".map-canvas");
     if (!canvas) return;
-    hitPath.setPointerCapture?.(event.pointerId);
-    let angle = getGunAngle(marker);
-    const update = (moveEvent) => {
-      if (moveEvent.pointerId !== event.pointerId) return;
-      const point = getMapCanvasPoint(canvas, moveEvent);
-      if (!point) return;
-      angle = Math.atan2(point.y - getGunY(marker), point.x - getGunX(marker)) * 180 / Math.PI;
-      updateGunSectorPath(canvas, markerId, { ...marker, angle });
-    };
-    const finish = (upEvent) => {
-      if (upEvent.pointerId !== event.pointerId) return;
-      hitPath.removeEventListener("pointermove", update);
-      hitPath.removeEventListener("pointerup", finish);
-      hitPath.removeEventListener("pointercancel", cancel);
-      hitPath.releasePointerCapture?.(event.pointerId);
-      actions.updateMapMarker(markerKey, markerId, { angle });
-    };
-    const cancel = (cancelEvent) => {
-      if (cancelEvent.pointerId !== event.pointerId) return;
-      hitPath.removeEventListener("pointermove", update);
-      hitPath.removeEventListener("pointerup", finish);
-      hitPath.removeEventListener("pointercancel", cancel);
-      hitPath.releasePointerCapture?.(event.pointerId);
-    };
-    hitPath.addEventListener("pointermove", update);
-    hitPath.addEventListener("pointerup", finish);
-    hitPath.addEventListener("pointercancel", cancel);
+    transformGunMarker(canvas, hitPath, markerKey, marker, actions, event);
   });
   svg.append(hitPath, linePath);
   return svg;
 }
 
-function resizeGunMarkerFromHandle(canvas, button, markerKey, marker, actions, event) {
+function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   const markerId = typeof marker.id === "string" ? marker.id : "";
-  button.setPointerCapture?.(event.pointerId);
-  let range = getGunRange(marker);
+  const startPoint = getMapCanvasPoint(canvas, event);
+  if (!startPoint) return;
+  const baseAngle = getGunAngle(marker);
+  const baseRange = getGunRange(marker);
+  const centerX = getGunX(marker);
+  const centerY = getGunY(marker);
+  const startDistance = Math.max(1, Math.hypot(startPoint.x - centerX, startPoint.y - centerY));
+  const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX) * 180 / Math.PI;
+  let mode = "";
+  let angle = baseAngle;
+  let range = baseRange;
+  target.setPointerCapture?.(event.pointerId);
   const update = (moveEvent) => {
     if (moveEvent.pointerId !== event.pointerId) return;
     const point = getMapCanvasPoint(canvas, moveEvent);
     if (!point) return;
-    range = Math.max(6, Math.min(80, Math.hypot(point.x - getGunX(marker), point.y - getGunY(marker))));
-    updateGunSectorPath(canvas, markerId, { ...marker, range });
-    button.dataset.dragged = "true";
+    const currentDistance = Math.max(1, Math.hypot(point.x - centerX, point.y - centerY));
+    const currentAngle = Math.atan2(point.y - centerY, point.x - centerX) * 180 / Math.PI;
+    const radialDelta = Math.abs(currentDistance - startDistance);
+    const angularDelta = Math.abs(normalizeAngleDelta(currentAngle - startAngle)) * Math.PI / 180 * startDistance;
+    if (!mode && Math.max(radialDelta, angularDelta) >= 2) mode = radialDelta >= angularDelta ? "range" : "angle";
+    if (mode === "range") {
+      range = Math.max(6, Math.min(80, currentDistance));
+    } else if (mode === "angle") {
+      angle = baseAngle + normalizeAngleDelta(currentAngle - startAngle);
+    } else {
+      return;
+    }
+    updateGunSectorPath(canvas, markerId, { ...marker, angle, range });
+    if (target.dataset) target.dataset.dragged = "true";
   };
   const finish = (upEvent) => {
     if (upEvent.pointerId !== event.pointerId) return;
-    button.removeEventListener("pointermove", update);
-    button.removeEventListener("pointerup", finish);
-    button.removeEventListener("pointercancel", cancel);
-    button.releasePointerCapture?.(event.pointerId);
-    actions.updateMapMarker(markerKey, markerId, { range });
+    target.removeEventListener("pointermove", update);
+    target.removeEventListener("pointerup", finish);
+    target.removeEventListener("pointercancel", cancel);
+    target.releasePointerCapture?.(event.pointerId);
+    if (mode === "range") actions.updateMapMarker(markerKey, markerId, { range });
+    if (mode === "angle") actions.updateMapMarker(markerKey, markerId, { angle });
   };
   const cancel = (cancelEvent) => {
     if (cancelEvent.pointerId !== event.pointerId) return;
-    button.removeEventListener("pointermove", update);
-    button.removeEventListener("pointerup", finish);
-    button.removeEventListener("pointercancel", cancel);
-    button.releasePointerCapture?.(event.pointerId);
+    target.removeEventListener("pointermove", update);
+    target.removeEventListener("pointerup", finish);
+    target.removeEventListener("pointercancel", cancel);
+    target.releasePointerCapture?.(event.pointerId);
   };
-  button.addEventListener("pointermove", update);
-  button.addEventListener("pointerup", finish);
-  button.addEventListener("pointercancel", cancel);
+  target.addEventListener("pointermove", update);
+  target.addEventListener("pointerup", finish);
+  target.addEventListener("pointercancel", cancel);
 }
 
 function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
@@ -795,6 +791,10 @@ function getGunAngle(marker) {
 
 function getGunRange(marker) {
   return Math.max(6, Math.min(80, Number(marker.range) || DEFAULT_GUN_MARKER_RANGE));
+}
+
+function normalizeAngleDelta(degrees) {
+  return ((Number(degrees) + 540) % 360) - 180;
 }
 
 function groupMapVariants(rule) {
