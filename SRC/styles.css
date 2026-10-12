@@ -229,6 +229,17 @@ button { cursor: pointer; }
   font-weight: 700;
 }
 
+.map-variant-panel {
+  display: grid;
+  gap: 6px;
+}
+
+.map-variant-title {
+  justify-self: end;
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .map-variant-list {
   display: flex;
   flex-wrap: wrap;
@@ -252,6 +263,10 @@ button { cursor: pointer; }
 
 .map-variant-choice input {
   accent-color: var(--accent);
+}
+
+.map-variant-choice:has(input:disabled) {
+  opacity: .75;
 }
 
 .analyzer-controls {

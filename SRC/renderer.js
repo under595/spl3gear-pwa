@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.21";
+  const APP_VERSION = "Ver1.22";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -418,22 +418,24 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   }
 
   section.append(controls, rangeSwitch, viewer);
-  if (group && group.variants.length > 1) {
-    section.append(renderVariantChoices(group, variant, slotIndex, actions));
-  }
+  if (group) section.append(renderVariantChoices(group, variant, slotIndex, actions));
   return section;
 }
 
 function renderVariantChoices(group, selectedVariant, slotIndex, actions) {
-  const wrap = createElement("div", "map-variant-list", { role: "group", "aria-label": "マップバリエーション" });
+  const wrap = createElement("div", "map-variant-panel");
+  wrap.append(createElement("strong", "map-variant-title", { text: "バリエーション" }));
+  const list = createElement("div", "map-variant-list", { role: "group", "aria-label": "マップバリエーション" });
   for (const item of group.variants) {
     const label = createElement("label", "map-variant-choice");
     const input = createElement("input", "", { type: "checkbox", value: item.variant });
     input.checked = item.variant === selectedVariant;
+    input.disabled = group.variants.length === 1;
     input.addEventListener("change", () => actions.selectMapVariant(slotIndex, item.variant));
     label.append(input, createElement("span", "", { text: item.variant || "標準" }));
-    wrap.append(label);
+    list.append(label);
   }
+  wrap.append(list);
   return wrap;
 }
 
