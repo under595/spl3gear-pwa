@@ -6,9 +6,18 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const MAP_MARKERS = ["📍", "🔴", "🟡", "🟢", "🔵", "⭐", "🔫", "⚠️"];
+  const MAP_MARKERS = [
+    { id: "pin", symbol: "📍" },
+    { id: "red", symbol: "🔴" },
+    { id: "yellow", symbol: "🟡" },
+    { id: "green", symbol: "🟢" },
+    { id: "blue", symbol: "🔵" },
+    { id: "star", symbol: "⭐" },
+    { id: "gun", symbol: "🔫" },
+    { id: "warning", symbol: "⚠️" },
+  ];
   const MAP_MARKER_LIMIT = 32;
-  const APP_VERSION = "Ver1.31";
+  const APP_VERSION = "Ver1.32";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -375,7 +384,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
   const imagePath = imageType === "photo" ? photoPath : (current && current.images.with);
   const favoriteKey = `${rule}|${stage}`;
   const markerKey = getMapMarkerKey(rule, stage);
-  const selectedMarker = normalizeMapMarker(slot.marker);
+  const selectedMarker = normalizeMapMarkerId(slot.marker);
   const markers = Array.isArray(state.mapMarkers?.[markerKey]) ? state.mapMarkers[markerKey].slice(0, MAP_MARKER_LIMIT) : [];
   const favoriteSet = new Set(state.favoriteMaps || []);
 
@@ -459,13 +468,13 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
 function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions) {
   const wrap = createElement("div", "map-marker-palette", { role: "group", "aria-label": `マーカーパレット ${slotIndex + 1}` });
   for (const marker of MAP_MARKERS) {
-    const button = createElement("button", `map-marker-button ${selectedMarker === marker ? "is-active" : ""}`.trim(), {
+    const button = createElement("button", `map-marker-button ${selectedMarker === marker.id ? "is-active" : ""}`.trim(), {
       type: "button",
-      text: marker,
-      title: `${marker} を選択`,
-      "aria-pressed": String(selectedMarker === marker),
+      text: marker.symbol,
+      title: `${marker.symbol} を選択`,
+      "aria-pressed": String(selectedMarker === marker.id),
     });
-    button.addEventListener("click", () => actions.selectMapMarker(slotIndex, marker));
+    button.addEventListener("click", () => actions.selectMapMarker(slotIndex, marker.id));
     wrap.append(button);
   }
   wrap.append(createElement("span", "map-marker-count", { text: `${markerCount}/${MAP_MARKER_LIMIT}` }));
@@ -473,16 +482,72 @@ function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions)
 }
 
 function renderMapMarker(markerKey, marker, actions) {
+  const markerId = typeof marker.id === "string" ? marker.id : "";
   const button = createElement("button", "map-marker", {
     type: "button",
-    text: normalizeMapMarker(marker.marker),
-    title: "クリックで削除",
-    "aria-label": "マーカーを削除",
+    text: getMapMarkerSymbol(marker.marker),
+    title: "ドラッグで移動 / クリックで削除",
+    "aria-label": "マーカーを移動または削除",
   });
   button.style.left = `${Math.max(0, Math.min(100, Number(marker.x) || 0))}%`;
   button.style.top = `${Math.max(0, Math.min(100, Number(marker.y) || 0))}%`;
+  button.addEventListener("pointerdown", (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const canvas = button.closest(".map-canvas");
+    if (!canvas) return;
+    button.setPointerCapture?.(event.pointerId);
+    const startX = event.clientX;
+    const startY = event.clientY;
+    let moved = false;
+    const update = (moveEvent) => {
+      if (moveEvent.pointerId !== event.pointerId) return;
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      if (!moved && Math.hypot(dx, dy) < 4) return;
+      moved = true;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = Math.max(0, Math.min(100, ((moveEvent.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(0, Math.min(100, ((moveEvent.clientY - rect.top) / rect.height) * 100));
+      button.style.left = `${x}%`;
+      button.style.top = `${y}%`;
+    };
+    const finish = (upEvent) => {
+      if (upEvent.pointerId !== event.pointerId) return;
+      button.removeEventListener("pointermove", update);
+      button.removeEventListener("pointerup", finish);
+      button.removeEventListener("pointercancel", cancel);
+      button.releasePointerCapture?.(event.pointerId);
+      if (!moved) return;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      button.dataset.dragged = "true";
+      actions.moveMapMarker(
+        markerKey,
+        markerId,
+        ((upEvent.clientX - rect.left) / rect.width) * 100,
+        ((upEvent.clientY - rect.top) / rect.height) * 100
+      );
+    };
+    const cancel = (cancelEvent) => {
+      if (cancelEvent.pointerId !== event.pointerId) return;
+      button.removeEventListener("pointermove", update);
+      button.removeEventListener("pointerup", finish);
+      button.removeEventListener("pointercancel", cancel);
+      button.releasePointerCapture?.(event.pointerId);
+    };
+    button.addEventListener("pointermove", update);
+    button.addEventListener("pointerup", finish);
+    button.addEventListener("pointercancel", cancel);
+  });
   button.addEventListener("click", (event) => {
     event.stopPropagation();
+    if (button.dataset.dragged === "true") {
+      delete button.dataset.dragged;
+      return;
+    }
     actions.removeMapMarker(markerKey, marker.id);
   });
   return button;
@@ -534,8 +599,23 @@ function getMapMarkerKey(rule, stage) {
   return `${rule}|${stage}`;
 }
 
-function normalizeMapMarker(marker) {
-  return MAP_MARKERS.includes(marker) ? marker : "📍";
+function normalizeMapMarkerId(marker) {
+  const aliases = new Map([
+    ["pin", "pin"], ["📍", "pin"],
+    ["red", "red"], ["🔴", "red"],
+    ["yellow", "yellow"], ["🟡", "yellow"],
+    ["green", "green"], ["🟢", "green"],
+    ["blue", "blue"], ["🔵", "blue"],
+    ["star", "star"], ["⭐", "star"],
+    ["gun", "gun"], ["🔫", "gun"],
+    ["warning", "warning"], ["⚠", "warning"], ["⚠️", "warning"],
+  ]);
+  return aliases.get(marker) || "pin";
+}
+
+function getMapMarkerSymbol(marker) {
+  const markerId = normalizeMapMarkerId(marker);
+  return MAP_MARKERS.find((item) => item.id === markerId)?.symbol || "📍";
 }
 
 function groupMapVariants(rule) {

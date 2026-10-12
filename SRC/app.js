@@ -45,6 +45,7 @@
     setMapWaterVisible(slotIndex, value) { updateMapSlot(state, slotIndex, { waterVisible: Boolean(value) }); redraw(); },
     selectMapMarker(slotIndex, marker) { updateMapSlot(state, slotIndex, { marker: normalizeMarker(marker) }); redraw(); },
     placeMapMarker(key, marker, x, y) { placeMapMarker(state, key, marker, x, y); redraw(); },
+    moveMapMarker(key, id, x, y) { moveMapMarker(state, key, id, x, y); redraw(); },
     removeMapMarker(key, id) { removeMapMarker(state, key, id); redraw(); },
     toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
@@ -274,8 +275,17 @@
   }
 
   function normalizeMarker(marker) {
-    const allowed = new Set(["📍", "🔴", "🟡", "🟢", "🔵", "⭐", "🔫", "⚠️"]);
-    return allowed.has(marker) ? marker : "📍";
+    const aliases = new Map([
+      ["pin", "pin"], ["📍", "pin"],
+      ["red", "red"], ["🔴", "red"],
+      ["yellow", "yellow"], ["🟡", "yellow"],
+      ["green", "green"], ["🟢", "green"],
+      ["blue", "blue"], ["🔵", "blue"],
+      ["star", "star"], ["⭐", "star"],
+      ["gun", "gun"], ["🔫", "gun"],
+      ["warning", "warning"], ["⚠", "warning"], ["⚠️", "warning"],
+    ]);
+    return aliases.get(marker) || "pin";
   }
 
   function normalizeMapMarkers(markers) {
@@ -316,6 +326,19 @@
     if (typeof key !== "string" || typeof id !== "string") return;
     current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
     current.mapMarkers[key] = (current.mapMarkers[key] || []).filter((item) => item.id !== id);
+  }
+
+  function moveMapMarker(current, key, id, x, y) {
+    if (typeof key !== "string" || typeof id !== "string") return;
+    current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
+    current.mapMarkers[key] = (current.mapMarkers[key] || []).map((item) => {
+      if (item.id !== id) return item;
+      return {
+        ...item,
+        x: Math.max(0, Math.min(100, Number(x) || 0)),
+        y: Math.max(0, Math.min(100, Number(y) || 0)),
+      };
+    });
   }
 
   function normalizeVisibleGroups(groups) {
