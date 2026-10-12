@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.29";
+  const APP_VERSION = "Ver1.30";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -336,14 +336,30 @@ function renderWeaponBar(state, actions) {
 function renderMapPage(state, actions) {
   const rule = normalizeMapRule(state.mapRule);
   const groups = groupMapVariants(rule);
+  const imageType = normalizeMapImageType(state.mapImageType);
   const page = createElement("section", "map-page", { "aria-label": "スプラトゥーン3 マップ" });
+  page.append(renderMapImageTypeSwitch(imageType, actions));
   for (let index = 0; index < 2; index++) {
-    page.append(renderMapSet(state, actions, rule, groups, index));
+    page.append(renderMapSet(state, actions, rule, groups, index, imageType));
   }
   return page;
 }
 
-function renderMapSet(state, actions, rule, groups, slotIndex) {
+function renderMapImageTypeSwitch(imageType, actions) {
+  const wrap = createElement("div", "map-image-type-switch", { role: "group", "aria-label": "マップ画像タイプ" });
+  for (const [type, label] of [["photo", "写真画像を使う"], ["white", "白画像を使う"]]) {
+    const button = createElement("button", `map-image-type-button ${imageType === type ? "is-active" : ""}`.trim(), {
+      type: "button",
+      text: label,
+      "aria-pressed": String(imageType === type),
+    });
+    button.addEventListener("click", () => actions.setMapImageType(type));
+    wrap.append(button);
+  }
+  return wrap;
+}
+
+function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
   const slot = normalizeMapSlotState(state.mapSlots && state.mapSlots[slotIndex]);
   const parsedStage = parseMapVariant(slot.stage);
   const group = groups.find((item) => item.base === parsedStage.base) || groups.find((item) => item.base === slot.stage) || groups.find((item) => item.base === "リュウグウターミナル") || groups[0] || null;
@@ -353,7 +369,8 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   const waterVisible = typeof slot.waterVisible === "boolean" ? slot.waterVisible : !isWaterlessMapVariant(requestedVariant);
   const variant = group ? resolveMapVariant(group, selectedState, waterVisible) : "";
   const current = group && (group.variants.find((item) => item.variant === variant) || group.variants[0]);
-  const imagePath = current && current.images.with;
+  const photoPath = getPhotoMapImagePath(stage, rule);
+  const imagePath = imageType === "photo" ? photoPath : (current && current.images.with);
   const favoriteKey = `${rule}|${stage}`;
   const favoriteSet = new Set(state.favoriteMaps || []);
 
@@ -402,7 +419,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   if (imagePath) {
     const image = createElement("img", "map-image", {
       src: encodeURI(imagePath),
-      alt: `${ruleLabel(rule)} ${stage}${variant ? ` ${variant}` : ""} ブキ射程表あり`,
+      alt: `${ruleLabel(rule)} ${stage}${variant && imageType === "white" ? ` ${variant}` : ""} ${imageType === "photo" ? "写真画像" : "白画像"}`,
       loading: "eager",
     });
     viewer.append(image);
@@ -411,7 +428,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   }
 
   section.append(controls, viewer);
-  if (group) section.append(renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions));
+  if (group && imageType === "white") section.append(renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions));
   return section;
 }
 
@@ -451,6 +468,10 @@ function createMapOption(name, selectedName, favorite, number) {
 
 function formatMapStageNumber(index) {
   return String(index).padStart(2, "0");
+}
+
+function getPhotoMapImagePath(stage, rule) {
+  return window.SPL3_GAME8_MAP_DATA?.[stage]?.[rule] || "";
 }
 
 function groupMapVariants(rule) {
@@ -569,6 +590,10 @@ function normalizeMapSlotState(slot = {}) {
 
 function normalizeMapRule(rule) {
   return MAP_DATA.rules.some((item) => item.id === rule) ? rule : "tower";
+}
+
+function normalizeMapImageType(type) {
+  return type === "photo" ? "photo" : "white";
 }
 
 function ruleLabel(rule) {

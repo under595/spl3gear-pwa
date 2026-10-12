@@ -10,6 +10,7 @@ Static files for GitHub Pages.
 - SRC/
 - asset/
 - asset_map/
+- asset_map_photo/
 
 ## GitHub Pages
 

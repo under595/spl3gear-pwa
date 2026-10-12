@@ -1,4 +1,4 @@
-const CACHE_VERSION = "spl3gear-pwa-v37";
+const CACHE_VERSION = "spl3gear-pwa-v38";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const APP_SHELL = [
   "./SRC/data/sendou-data.js",
   "./SRC/data/wiki-weapon-main.js",
   "./SRC/data/map-data.js",
+  "./SRC/data/game8-map-data.js",
   "./SRC/state.js",
   "./SRC/utils.js",
   "./SRC/calculations.js",

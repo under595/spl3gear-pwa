@@ -64,6 +64,7 @@
       },
       mainShotCount: 5,
       mapRule: "tower",
+      mapImageType: "white",
       mapSlots: [
         { stage: "リュウグウターミナル", variant: "", waterVisible: true },
         { stage: "リュウグウターミナル", variant: "", waterVisible: true },

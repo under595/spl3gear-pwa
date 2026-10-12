@@ -39,6 +39,7 @@
     toggleSlotDisabled(slot) { toggleSlotDisabled(state, slot); redraw(); },
     togglePool() { state.poolVisible = !state.poolVisible; redraw(); },
     selectMapRule(rule) { state.mapRule = rule || "tower"; redraw(); },
+    setMapImageType(type) { state.mapImageType = type === "photo" ? "photo" : "white"; redraw(); },
     selectMapStage(slotIndex, stage) { updateMapSlot(state, slotIndex, { stage: stage || "", variant: "", waterVisible: true }); redraw(); },
     selectMapVariant(slotIndex, variant) { updateMapSlot(state, slotIndex, { variant: variant || "" }); redraw(); },
     setMapWaterVisible(slotIndex, value) { updateMapSlot(state, slotIndex, { waterVisible: Boolean(value) }); redraw(); },
@@ -240,6 +241,7 @@
       visibleGroups: normalizeVisibleGroups(current.visibleGroups),
       mainShotCount: current.mainShotCount,
       mapRule: current.mapRule,
+      mapImageType: current.mapImageType === "photo" ? "photo" : "white",
       mapSlots: normalizeMapSlots(current),
       favoriteMaps: current.favoriteMaps,
     };
