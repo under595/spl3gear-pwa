@@ -27,7 +27,7 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.41";
+  const APP_VERSION = "Ver1.42";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -469,6 +469,9 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
         if (normalizeMapMarkerId(marker.marker) === "gun") canvas.append(renderGunMarkerSector(markerKey, marker, actions));
         canvas.append(renderMapMarker(markerKey, marker, actions));
       }
+      const refreshGunSectors = () => refreshGunSectorPaths(canvas, markers);
+      image.addEventListener("load", refreshGunSectors, { once: true });
+      requestAnimationFrame(refreshGunSectors);
     }
     viewer.append(canvas);
   } else {
@@ -589,7 +592,15 @@ function renderMapMarker(markerKey, marker, actions) {
 
 function updateGunSectorPath(canvas, markerId, marker) {
   const paths = canvas.querySelectorAll(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-shape`);
-  for (const path of paths) path.setAttribute("d", buildGunSectorPath(marker));
+  for (const path of paths) path.setAttribute("d", buildGunSectorPath(marker, canvas));
+}
+
+function refreshGunSectorPaths(canvas, markers) {
+  for (const marker of markers) {
+    if (normalizeMapMarkerId(marker.marker) === "gun" && typeof marker.id === "string") {
+      updateGunSectorPath(canvas, marker.id, marker);
+    }
+  }
 }
 
 function renderGunMarkerSector(markerKey, marker, actions) {
@@ -626,8 +637,9 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   const baseRange = getGunRange(marker);
   const centerX = getGunX(marker);
   const centerY = getGunY(marker);
-  const startDistance = Math.max(1, Math.hypot(startPoint.x - centerX, startPoint.y - centerY));
-  const startAngle = Math.atan2(startPoint.y - centerY, startPoint.x - centerX) * 180 / Math.PI;
+  const startVector = getGunSectorVector(canvas, startPoint, centerX, centerY);
+  const startDistance = Math.max(1, Math.hypot(startVector.x, startVector.y));
+  const startAngle = Math.atan2(startVector.y, startVector.x) * 180 / Math.PI;
   let mode = "";
   let angle = baseAngle;
   let range = baseRange;
@@ -636,8 +648,9 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
     if (moveEvent.pointerId !== event.pointerId) return;
     const point = getMapCanvasPoint(canvas, moveEvent);
     if (!point) return;
-    const currentDistance = Math.max(1, Math.hypot(point.x - centerX, point.y - centerY));
-    const currentAngle = Math.atan2(point.y - centerY, point.x - centerX) * 180 / Math.PI;
+    const currentVector = getGunSectorVector(canvas, point, centerX, centerY);
+    const currentDistance = Math.max(1, Math.hypot(currentVector.x, currentVector.y));
+    const currentAngle = Math.atan2(currentVector.y, currentVector.x) * 180 / Math.PI;
     const radialDelta = Math.abs(currentDistance - startDistance);
     const angularDelta = Math.abs(normalizeAngleDelta(currentAngle - startAngle)) * Math.PI / 180 * startDistance;
     if (!mode && Math.max(radialDelta, angularDelta) >= 2) mode = radialDelta >= angularDelta ? "range" : "angle";
@@ -755,19 +768,22 @@ function createMapMarkerImage(marker, className) {
   });
 }
 
-function buildGunSectorPath(marker) {
+function buildGunSectorPath(marker, canvas) {
   const x = getGunX(marker);
   const y = getGunY(marker);
   const range = getGunRange(marker);
   const angle = getGunAngle(marker);
+  const scale = getGunSectorScale(canvas);
   const half = GUN_MARKER_SPREAD_DEGREES / 2;
   const start = (angle - half) * Math.PI / 180;
   const end = (angle + half) * Math.PI / 180;
-  const x1 = x + Math.cos(start) * range;
-  const y1 = y + Math.sin(start) * range;
-  const x2 = x + Math.cos(end) * range;
-  const y2 = y + Math.sin(end) * range;
-  return `M ${x.toFixed(3)} ${y.toFixed(3)} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${range.toFixed(3)} ${range.toFixed(3)} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`;
+  const rx = range * scale.x;
+  const ry = range * scale.y;
+  const x1 = x + Math.cos(start) * rx;
+  const y1 = y + Math.sin(start) * ry;
+  const x2 = x + Math.cos(end) * rx;
+  const y2 = y + Math.sin(end) * ry;
+  return `M ${x.toFixed(3)} ${y.toFixed(3)} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${rx.toFixed(3)} ${ry.toFixed(3)} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`;
 }
 
 function getMapCanvasPoint(canvas, event) {
@@ -776,6 +792,24 @@ function getMapCanvasPoint(canvas, event) {
   return {
     x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
     y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+  };
+}
+
+function getGunSectorScale(canvas) {
+  const rect = canvas?.getBoundingClientRect?.();
+  if (!rect || !rect.width || !rect.height) return { x: 1, y: 1 };
+  const base = Math.min(rect.width, rect.height);
+  return {
+    x: base / rect.width,
+    y: base / rect.height,
+  };
+}
+
+function getGunSectorVector(canvas, point, centerX, centerY) {
+  const scale = getGunSectorScale(canvas);
+  return {
+    x: (point.x - centerX) / Math.max(0.001, scale.x),
+    y: (point.y - centerY) / Math.max(0.001, scale.y),
   };
 }
 
