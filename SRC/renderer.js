@@ -5,12 +5,13 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.16";
+  const APP_VERSION = "Ver1.17";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
     ldeIntensity: state.ldeIntensity,
     drinkActive: state.drinkActive,
+    ikaFlowActive: state.ikaFlowActive,
     comebackActive: state.comebackActive,
     disabledSlots: state.disabledSlots,
   });
@@ -61,7 +62,7 @@ function renderOptionsGroup(state, actions) {
     ["rangeComparison", "射程対比"],
     ["efficiency", "効率"],
     ["gearSet", "ギアセット"],
-    ["analyzer", "解析条件"],
+    ["analyzer", "解放条件"],
   ];
   for (const [key, label] of items) {
     const item = createElement("label", "option-check");
@@ -96,6 +97,7 @@ function renderEfficiencyTest(state, actions) {
   const data = buildEfficiencyTest(state.slots, state.weaponName, {
     ldeIntensity: state.ldeIntensity,
     drinkActive: state.drinkActive,
+    ikaFlowActive: state.ikaFlowActive,
     comebackActive: state.comebackActive,
     mainShotCount: state.mainShotCount,
     disabledSlots: state.disabledSlots,
@@ -191,15 +193,15 @@ function renderEfficiencyMeter(entry) {
 
 function renderAnalyzerControls(state, actions) {
   const isOpen = state.analyzerControlsOpen !== false;
-  const wrap = createElement("section", `analyzer-controls ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "解析条件" });
+  const wrap = createElement("section", `analyzer-controls ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "解放条件" });
 
   const header = createElement("div", "analyzer-header");
-  header.append(createElement("strong", "", { text: "解析条件" }));
+  header.append(createElement("strong", "", { text: "解放条件" }));
   const summary = createElement("span", "analyzer-summary", { text: analyzerSummaryText(state) });
   const toggle = createElement("button", "detail-toggle", {
     type: "button",
     text: isOpen ? "閉じる" : "開く",
-    title: isOpen ? "解析条件を閉じる" : "解析条件を開く",
+    title: isOpen ? "解放条件を閉じる" : "解放条件を開く",
     "aria-expanded": String(isOpen),
   });
   toggle.addEventListener("click", actions.toggleAnalyzerControls);
@@ -221,8 +223,14 @@ function renderAnalyzerControls(state, actions) {
   checkbox.addEventListener("change", (event) => actions.setDrinkActive(event.target.checked));
   drink.append(checkbox, createElement("span", "", { text: "ドリンク状態" }));
 
+  const ikaFlow = createElement("label", "control-line checkbox-line");
+  const ikaFlowCheckbox = createElement("input", "", { type: "checkbox", title: "イカフロー状態" });
+  ikaFlowCheckbox.checked = Boolean(state.ikaFlowActive);
+  ikaFlowCheckbox.addEventListener("change", (event) => actions.setIkaFlowActive(event.target.checked));
+  ikaFlow.append(ikaFlowCheckbox, createElement("span", "", { text: "イカフロー状態" }));
+
   const body = createElement("div", "analyzer-body");
-  body.append(lde, drink);
+  body.append(lde, drink, ikaFlow);
 
   if (hasMainPower(state, "カムバック")) {
     const comeback = createElement("label", "control-line checkbox-line");
@@ -241,6 +249,7 @@ function analyzerSummaryText(state) {
   const intensity = Number(state.ldeIntensity ?? 35);
   const items = [`ラスパ${intensity}`];
   if (state.drinkActive) items.push("ドリンクON");
+  if (state.ikaFlowActive) items.push("イカフローON");
   if (state.comebackActive && hasMainPower(state, "カムバック")) items.push("カムバックON");
   return items.join(" / ");
 }
@@ -506,6 +515,7 @@ function renderRangeComparisonRow(state, weaponName) {
   const results = buildResults(state.slots, weaponName, {
     ldeIntensity: state.ldeIntensity,
     drinkActive: state.drinkActive,
+    ikaFlowActive: state.ikaFlowActive,
     comebackActive: state.comebackActive,
     disabledSlots: state.disabledSlots,
   });

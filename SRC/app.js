@@ -21,6 +21,7 @@
     toggleFavoriteWeapon(name) { toggleFavoriteWeapon(state, name || state.weaponName); state.pendingWeaponName = null; redraw(); },
     setLdeIntensity(value) { state.ldeIntensity = Number(value); redraw(); },
     setDrinkActive(value) { state.drinkActive = Boolean(value); redraw(); },
+    setIkaFlowActive(value) { state.ikaFlowActive = Boolean(value); redraw(); },
     setComebackActive(value) { state.comebackActive = Boolean(value); redraw(); },
     toggleAnalyzerControls() { state.analyzerControlsOpen = !state.analyzerControlsOpen; redraw(); },
     toggleWeaponDetails() { state.weaponDetailsOpen = !state.weaponDetailsOpen; redraw(); },
@@ -187,6 +188,7 @@
       if (typeof saved.poolVisible === "boolean") current.poolVisible = saved.poolVisible;
       if (Number.isFinite(Number(saved.ldeIntensity))) current.ldeIntensity = Number(saved.ldeIntensity);
       if (typeof saved.drinkActive === "boolean") current.drinkActive = saved.drinkActive;
+      if (typeof saved.ikaFlowActive === "boolean") current.ikaFlowActive = saved.ikaFlowActive;
       if (typeof saved.comebackActive === "boolean") current.comebackActive = saved.comebackActive;
       if (typeof saved.analyzerControlsOpen === "boolean") current.analyzerControlsOpen = saved.analyzerControlsOpen;
       if (typeof saved.weaponDetailsOpen === "boolean") current.weaponDetailsOpen = saved.weaponDetailsOpen;
@@ -214,6 +216,7 @@
       poolVisible: current.poolVisible,
       ldeIntensity: current.ldeIntensity,
       drinkActive: current.drinkActive,
+      ikaFlowActive: current.ikaFlowActive,
       comebackActive: current.comebackActive,
       analyzerControlsOpen: current.analyzerControlsOpen,
       weaponDetailsOpen: current.weaponDetailsOpen,

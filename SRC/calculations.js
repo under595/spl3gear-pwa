@@ -518,6 +518,12 @@
       addMinPower(totals, "イカ移動速度", 29, "ドリンク");
       addMinPower(totals, "ヒト移動速度", 29, "ドリンク");
     }
+    if (options.ikaFlowActive) {
+      addBonusPower(totals, "ヒト移動速度", 30, "イカフロー");
+      addBonusPower(totals, "イカ移動速度", 30, "イカフロー");
+      addBonusPower(totals, "相手インク影響", 30, "イカフロー");
+      addBonusPower(totals, "アクション強化", 30, "イカフロー");
+    }
     return totals;
   }
 
@@ -665,6 +671,9 @@
 
     if (options.drinkActive) {
       results.push({ type: "text", name: "ドリンク", icon: "sp10.png", text: "ドリンク状態として、SSU/RSUは最低29AP、RES/QR/QSJ/SS/IAは57AP相当で計算します。" });
+    }
+    if (options.ikaFlowActive) {
+      results.push({ type: "text", name: "イカフロー", icon: iconForLabel("アクション強化"), text: "イカフロー状態として、ヒト速/イカ速/相手インク影響軽減/アクション強化に30APを加算して計算します。" });
     }
 
     return results;

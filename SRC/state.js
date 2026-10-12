@@ -46,6 +46,7 @@
       drag: null,
       ldeIntensity: 35,
       drinkActive: false,
+      ikaFlowActive: false,
       comebackActive: false,
       analyzerControlsOpen: true,
       weaponDetailsOpen: true,
