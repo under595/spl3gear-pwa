@@ -27,7 +27,10 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 1;
-  const APP_VERSION = "Ver1.46";
+  const GUN_MARKER_HANDLE_TIMEOUT_MS = 3000;
+  let activeGunHandleCleanup = null;
+  let activeGunHandleTimer = 0;
+  const APP_VERSION = "Ver1.47";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -521,6 +524,7 @@ function renderMapMarker(markerKey, marker, actions) {
   button.style.top = `${Math.max(0, Math.min(100, Number(marker.y) || 0))}%`;
   button.addEventListener("contextmenu", (event) => event.preventDefault());
   button.addEventListener("pointerdown", (event) => {
+    hideGunMarkerHandles();
     event.preventDefault();
     event.stopPropagation();
     const canvas = button.closest(".map-canvas");
@@ -623,13 +627,17 @@ function renderGunMarkerSector(markerKey, marker, actions) {
     event.stopPropagation();
     const canvas = svg.closest(".map-canvas");
     if (!canvas) return;
+    if (event.pointerType !== "mouse") {
+      showGunMarkerHandles(canvas, markerKey, marker, actions);
+      return;
+    }
     transformGunMarker(canvas, hitPath, markerKey, marker, actions, event);
   });
   svg.append(hitPath, linePath);
   return svg;
 }
 
-function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
+function transformGunMarker(canvas, target, markerKey, marker, actions, event, forcedMode = "") {
   event.preventDefault();
   const markerId = typeof marker.id === "string" ? marker.id : "";
   const sensitivity = event.pointerType === "mouse" ? GUN_MARKER_DRAG_SENSITIVITY : 1;
@@ -642,7 +650,7 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   const startVector = getGunSectorVector(canvas, startPoint, centerX, centerY);
   const startDistance = Math.max(1, Math.hypot(startVector.x, startVector.y));
   const startAngle = Math.atan2(startVector.y, startVector.x) * 180 / Math.PI;
-  let mode = "";
+  let mode = forcedMode;
   let angle = baseAngle;
   let range = baseRange;
   target.setPointerCapture?.(event.pointerId);
@@ -696,6 +704,91 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
 function isGunSectorTransformPointer(event) {
   if (event.pointerType === "mouse") return event.button === 0;
   return event.button === undefined || event.button === 0;
+}
+
+function showGunMarkerHandles(canvas, markerKey, marker, actions) {
+  hideGunMarkerHandles();
+  const markerId = typeof marker.id === "string" ? marker.id : "";
+  if (!markerId) return;
+  const group = createElement("div", "map-gun-handles", { "data-marker-id": markerId });
+  const handles = [
+    { kind: "angle", label: "↺", title: "左へ回転", delta: -5, point: getGunHandlePoint(marker, canvas, getGunAngle(marker) - (GUN_MARKER_SPREAD_DEGREES / 2), getGunRange(marker) * 0.82) },
+    { kind: "range", label: "↕", title: "射程サイズ", delta: 3, point: getGunHandlePoint(marker, canvas, getGunAngle(marker), getGunRange(marker)) },
+    { kind: "angle", label: "↻", title: "右へ回転", delta: 5, point: getGunHandlePoint(marker, canvas, getGunAngle(marker) + (GUN_MARKER_SPREAD_DEGREES / 2), getGunRange(marker) * 0.82) },
+  ];
+  for (const handle of handles) {
+    const button = createElement("button", `map-gun-handle map-gun-handle-${handle.kind}`, {
+      type: "button",
+      text: handle.label,
+      title: handle.title,
+      "aria-label": handle.title,
+    });
+    button.style.left = `${handle.point.x}%`;
+    button.style.top = `${handle.point.y}%`;
+    button.addEventListener("contextmenu", (event) => event.preventDefault());
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (button.dataset.dragged === "true") {
+        delete button.dataset.dragged;
+        return;
+      }
+      if (handle.kind === "angle") {
+        const angle = getGunAngle(marker) + handle.delta;
+        updateGunSectorPath(canvas, markerId, { ...marker, angle });
+        actions.updateMapMarker(markerKey, markerId, { angle });
+      } else {
+        const range = Math.max(6, Math.min(80, getGunRange(marker) + handle.delta));
+        updateGunSectorPath(canvas, markerId, { ...marker, range });
+        actions.updateMapMarker(markerKey, markerId, { range });
+      }
+      hideGunMarkerHandles();
+    });
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      window.clearTimeout(activeGunHandleTimer);
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const markDragged = (moveEvent) => {
+        if (moveEvent.pointerId !== event.pointerId) return;
+        if (Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY) >= 3) button.dataset.dragged = "true";
+      };
+      button.addEventListener("pointermove", markDragged);
+      button.addEventListener("pointerup", () => {
+        button.removeEventListener("pointermove", markDragged);
+        scheduleGunHandleAutoHide();
+      }, { once: true });
+      button.addEventListener("pointercancel", () => {
+        button.removeEventListener("pointermove", markDragged);
+        scheduleGunHandleAutoHide();
+      }, { once: true });
+      transformGunMarker(canvas, button, markerKey, marker, actions, event, handle.kind);
+    });
+    group.append(button);
+  }
+  canvas.append(group);
+  const outside = (event) => {
+    if (event.target?.closest?.(".map-gun-handles, .map-gun-sector")) return;
+    hideGunMarkerHandles();
+  };
+  scheduleGunHandleAutoHide();
+  activeGunHandleCleanup = () => {
+    window.clearTimeout(activeGunHandleTimer);
+    document.removeEventListener("pointerdown", outside, true);
+    group.remove();
+    activeGunHandleCleanup = null;
+  };
+  document.addEventListener("pointerdown", outside, true);
+}
+
+function hideGunMarkerHandles() {
+  if (activeGunHandleCleanup) activeGunHandleCleanup();
+}
+
+function scheduleGunHandleAutoHide() {
+  window.clearTimeout(activeGunHandleTimer);
+  activeGunHandleTimer = window.setTimeout(hideGunMarkerHandles, GUN_MARKER_HANDLE_TIMEOUT_MS);
 }
 
 function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
@@ -802,6 +895,15 @@ function buildGunSectorPath(marker, canvas) {
   const x2 = x + Math.cos(end) * rx;
   const y2 = y + Math.sin(end) * ry;
   return `M ${x.toFixed(3)} ${y.toFixed(3)} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${rx.toFixed(3)} ${ry.toFixed(3)} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`;
+}
+
+function getGunHandlePoint(marker, canvas, angle, range) {
+  const scale = getGunSectorScale(canvas);
+  const rad = angle * Math.PI / 180;
+  return {
+    x: Math.max(0, Math.min(100, getGunX(marker) + (Math.cos(rad) * range * scale.x))),
+    y: Math.max(0, Math.min(100, getGunY(marker) + (Math.sin(rad) * range * scale.y))),
+  };
 }
 
 function getMapCanvasPoint(canvas, event) {
