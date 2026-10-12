@@ -928,6 +928,12 @@ button { cursor: pointer; }
   white-space: nowrap;
 }
 
+.result-chip-wrap {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
 .result-chip small {
   color: #fff;
   font-size: 10px;
@@ -938,6 +944,24 @@ button { cursor: pointer; }
 .result-value {
   font-size: 15px;
   line-height: 1;
+}
+
+.segmented-value {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 3px 6px;
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1.25;
+}
+
+.segment-item {
+  white-space: nowrap;
+}
+
+.segment-separator {
+  color: #cfcfcf;
 }
 
 .result-bar {

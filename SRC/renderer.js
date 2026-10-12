@@ -558,8 +558,11 @@ function renderResultRow(result) {
   } else if (result.type === "multi") {
     const multi = createElement("div", "result-multi");
     for (const item of result.values) {
-      const part = createElement("span", "result-chip");
-      part.append(createElement("small", "", { text: item.label }), createElement("b", "", { text: item.value }));
+      const canWrap = item.label === "他キル";
+      const part = createElement("span", `result-chip ${canWrap ? "result-chip-wrap" : ""}`.trim());
+      part.append(createElement("small", "", { text: item.label }));
+      if (canWrap) part.append(renderSegmentedValue(item.value));
+      else part.append(createElement("b", "", { text: item.value }));
       multi.append(part);
     }
     body.append(multi);
@@ -568,6 +571,16 @@ function renderResultRow(result) {
   }
   row.append(left, body);
   return row;
+}
+
+function renderSegmentedValue(value) {
+  const wrap = createElement("b", "segmented-value");
+  const parts = String(value).split(" / ").filter(Boolean);
+  parts.forEach((part, index) => {
+    if (index) wrap.append(createElement("span", "segment-separator", { text: "/" }));
+    wrap.append(createElement("span", "segment-item", { text: part }));
+  });
+  return wrap;
 }
 
 function renderBar(ratio = 0) {
