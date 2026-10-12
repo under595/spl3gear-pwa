@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.13";
+  const APP_VERSION = "Ver1.14";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -557,7 +557,7 @@ function renderAppVersion(actions) {
   const refresh = createElement("button", "app-refresh", {
     type: "button",
     text: "更新",
-    title: "キャッシュを消して最新版を読み込みます",
+    title: "ギアセットを保存したまま最新版を読み込みます",
   });
   refresh.addEventListener("click", actions.refreshApp);
   footer.append(refresh);

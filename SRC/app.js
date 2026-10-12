@@ -5,6 +5,8 @@
   const { addPowerToFirstAvailable, clearPart, movePowerToSlot, removeSlotPower, toggleSlotDisabled } = window.SPL3.operations;
   const { clearSlotValidity, markSlotValidity, render } = window.SPL3.renderer;
   const STORAGE_KEY = "spl3gear-simulator-state-v1";
+  const REFRESH_BACKUP_KEY = "spl3gear-simulator-refresh-backup-v1";
+  const REFRESH_PENDING_KEY = "spl3gear-simulator-refresh-pending-v1";
   const DRAG_START_DELAY_MS = 110;
   const SLOT_LONG_PRESS_MS = 260;
 
@@ -164,23 +166,7 @@
 
   function saveState(current) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        weaponName: current.weaponName,
-        favoriteWeapons: current.favoriteWeapons,
-        gearSetIndex: current.gearSetIndex,
-        gearSets: current.gearSets,
-        slots: current.slots,
-        disabledSlots: current.disabledSlots,
-        poolVisible: current.poolVisible,
-        ldeIntensity: current.ldeIntensity,
-        drinkActive: current.drinkActive,
-        comebackActive: current.comebackActive,
-        analyzerControlsOpen: current.analyzerControlsOpen,
-        weaponDetailsOpen: current.weaponDetailsOpen,
-        rangeComparisonOpen: current.rangeComparisonOpen,
-        efficiencyTestOpen: current.efficiencyTestOpen,
-        mainShotCount: current.mainShotCount,
-      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(statePayload(current)));
     } catch (error) {
       console.warn("Failed to save simulator state", error);
     }
@@ -188,7 +174,7 @@
 
   function restoreState(current) {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      const saved = readSavedState();
       if (!saved || typeof saved !== "object") return;
       if (WEAPON_DATAS[saved.weaponName]) current.weaponName = saved.weaponName;
       if (Array.isArray(saved.favoriteWeapons)) {
@@ -208,6 +194,39 @@
     } catch (error) {
       console.warn("Failed to restore simulator state", error);
     }
+  }
+
+  function statePayload(current) {
+    return {
+      savedAt: Date.now(),
+      weaponName: current.weaponName,
+      favoriteWeapons: current.favoriteWeapons,
+      gearSetIndex: current.gearSetIndex,
+      gearSets: current.gearSets,
+      slots: current.slots,
+      disabledSlots: current.disabledSlots,
+      poolVisible: current.poolVisible,
+      ldeIntensity: current.ldeIntensity,
+      drinkActive: current.drinkActive,
+      comebackActive: current.comebackActive,
+      analyzerControlsOpen: current.analyzerControlsOpen,
+      weaponDetailsOpen: current.weaponDetailsOpen,
+      rangeComparisonOpen: current.rangeComparisonOpen,
+      efficiencyTestOpen: current.efficiencyTestOpen,
+      mainShotCount: current.mainShotCount,
+    };
+  }
+
+  function readSavedState() {
+    const pending = localStorage.getItem(REFRESH_PENDING_KEY) === "1";
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    const backup = JSON.parse(localStorage.getItem(REFRESH_BACKUP_KEY) || "null");
+    if (pending && backup && typeof backup === "object") {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(backup));
+      localStorage.removeItem(REFRESH_PENDING_KEY);
+      return backup;
+    }
+    return saved || backup;
   }
 
   function isValidSlots(slots) {
@@ -272,13 +291,17 @@
 
   async function refreshApp() {
     try {
+      const payload = statePayload(state);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      localStorage.setItem(REFRESH_BACKUP_KEY, JSON.stringify(payload));
+      localStorage.setItem(REFRESH_PENDING_KEY, "1");
       if (window.caches) {
         const keys = await caches.keys();
         await Promise.all(keys.map((key) => caches.delete(key)));
       }
       if (navigator.serviceWorker) {
         const registrations = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(registrations.map((registration) => registration.unregister()));
+        await Promise.all(registrations.map((registration) => registration.update().catch(() => registration.unregister())));
       }
     } catch (error) {
       console.warn("Failed to clear app cache", error);
