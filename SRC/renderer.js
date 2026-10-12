@@ -27,7 +27,7 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.43";
+  const APP_VERSION = "Ver1.44";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -468,6 +468,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
     });
     canvas.append(image);
     if (imageType === "white") {
+      preloadWhiteMapVariants(group);
       for (const marker of markers) {
         if (normalizeMapMarkerId(marker.marker) === "gun") canvas.append(renderGunMarkerSector(markerKey, marker, actions));
         canvas.append(renderMapMarker(markerKey, marker, actions));
@@ -741,6 +742,16 @@ function formatMapStageNumber(index) {
 
 function getPhotoMapImagePath(stage, rule) {
   return window.SPL3_GAME8_MAP_DATA?.[stage]?.[rule] || "";
+}
+
+function preloadWhiteMapVariants(group) {
+  if (!group || !Array.isArray(group.variants)) return;
+  const paths = new Set(group.variants.map((item) => item.images?.with).filter(Boolean));
+  for (const path of paths) {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = encodeURI(path);
+  }
 }
 
 function getMapMarkerKey(rule, stage) {
