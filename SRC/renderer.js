@@ -26,7 +26,7 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const APP_VERSION = "Ver1.37";
+  const APP_VERSION = "Ver1.38";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -504,7 +504,7 @@ function renderMapMarker(markerKey, marker, actions) {
   const markerType = normalizeMapMarkerId(marker.marker);
   const button = createElement("button", "map-marker", {
     type: "button",
-    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグで角度変更 / クリックで削除" : "ドラッグで移動 / クリックで削除",
+    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグでサイズ変更 / クリックで削除" : "ドラッグで移動 / クリックで削除",
     "aria-label": "マーカーを移動または削除",
     "data-marker-id": markerId,
   });
@@ -518,7 +518,7 @@ function renderMapMarker(markerKey, marker, actions) {
     const canvas = button.closest(".map-canvas");
     if (!canvas) return;
     if (event.button === 2 && markerType === "gun") {
-      rotateGunMarker(canvas, button, markerKey, marker, actions, event);
+      resizeGunMarkerFromHandle(canvas, button, markerKey, marker, actions, event);
       return;
     }
     if (event.button !== undefined && event.button !== 0) return;
@@ -612,13 +612,13 @@ function renderGunMarkerSector(markerKey, marker, actions) {
     const canvas = svg.closest(".map-canvas");
     if (!canvas) return;
     hitPath.setPointerCapture?.(event.pointerId);
-    let range = getGunRange(marker);
+    let angle = getGunAngle(marker);
     const update = (moveEvent) => {
       if (moveEvent.pointerId !== event.pointerId) return;
       const point = getMapCanvasPoint(canvas, moveEvent);
       if (!point) return;
-      range = Math.max(6, Math.min(80, Math.hypot(point.x - getGunX(marker), point.y - getGunY(marker))));
-      updateGunSectorPath(canvas, markerId, { ...marker, range });
+      angle = Math.atan2(point.y - getGunY(marker), point.x - getGunX(marker)) * 180 / Math.PI;
+      updateGunSectorPath(canvas, markerId, { ...marker, angle });
     };
     const finish = (upEvent) => {
       if (upEvent.pointerId !== event.pointerId) return;
@@ -626,7 +626,7 @@ function renderGunMarkerSector(markerKey, marker, actions) {
       hitPath.removeEventListener("pointerup", finish);
       hitPath.removeEventListener("pointercancel", cancel);
       hitPath.releasePointerCapture?.(event.pointerId);
-      actions.updateMapMarker(markerKey, markerId, { range });
+      actions.updateMapMarker(markerKey, markerId, { angle });
     };
     const cancel = (cancelEvent) => {
       if (cancelEvent.pointerId !== event.pointerId) return;
@@ -643,16 +643,16 @@ function renderGunMarkerSector(markerKey, marker, actions) {
   return svg;
 }
 
-function rotateGunMarker(canvas, button, markerKey, marker, actions, event) {
+function resizeGunMarkerFromHandle(canvas, button, markerKey, marker, actions, event) {
   const markerId = typeof marker.id === "string" ? marker.id : "";
   button.setPointerCapture?.(event.pointerId);
-  let angle = getGunAngle(marker);
+  let range = getGunRange(marker);
   const update = (moveEvent) => {
     if (moveEvent.pointerId !== event.pointerId) return;
     const point = getMapCanvasPoint(canvas, moveEvent);
     if (!point) return;
-    angle = Math.atan2(point.y - getGunY(marker), point.x - getGunX(marker)) * 180 / Math.PI;
-    updateGunSectorPath(canvas, markerId, { ...marker, angle });
+    range = Math.max(6, Math.min(80, Math.hypot(point.x - getGunX(marker), point.y - getGunY(marker))));
+    updateGunSectorPath(canvas, markerId, { ...marker, range });
     button.dataset.dragged = "true";
   };
   const finish = (upEvent) => {
@@ -661,7 +661,7 @@ function rotateGunMarker(canvas, button, markerKey, marker, actions, event) {
     button.removeEventListener("pointerup", finish);
     button.removeEventListener("pointercancel", cancel);
     button.releasePointerCapture?.(event.pointerId);
-    actions.updateMapMarker(markerKey, markerId, { angle });
+    actions.updateMapMarker(markerKey, markerId, { range });
   };
   const cancel = (cancelEvent) => {
     if (cancelEvent.pointerId !== event.pointerId) return;
