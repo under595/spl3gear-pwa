@@ -26,7 +26,7 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const APP_VERSION = "Ver1.35";
+  const APP_VERSION = "Ver1.36";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -538,6 +538,9 @@ function renderMapMarker(markerKey, marker, actions) {
       const y = Math.max(0, Math.min(100, ((moveEvent.clientY - rect.top) / rect.height) * 100));
       button.style.left = `${x}%`;
       button.style.top = `${y}%`;
+      if (markerType === "gun") {
+        updateGunSectorPath(canvas, markerId, { ...marker, x, y });
+      }
     };
     const finish = (upEvent) => {
       if (upEvent.pointerId !== event.pointerId) return;
@@ -549,11 +552,16 @@ function renderMapMarker(markerKey, marker, actions) {
       const rect = canvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       button.dataset.dragged = "true";
+      const x = Math.max(0, Math.min(100, ((upEvent.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(0, Math.min(100, ((upEvent.clientY - rect.top) / rect.height) * 100));
+      if (markerType === "gun") {
+        updateGunSectorPath(canvas, markerId, { ...marker, x, y });
+      }
       actions.moveMapMarker(
         markerKey,
         markerId,
-        ((upEvent.clientX - rect.left) / rect.width) * 100,
-        ((upEvent.clientY - rect.top) / rect.height) * 100
+        x,
+        y
       );
     };
     const cancel = (cancelEvent) => {
@@ -576,6 +584,11 @@ function renderMapMarker(markerKey, marker, actions) {
     actions.removeMapMarker(markerKey, marker.id);
   });
   return button;
+}
+
+function updateGunSectorPath(canvas, markerId, marker) {
+  const path = canvas.querySelector(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-path`);
+  path?.setAttribute("d", buildGunSectorPath(marker));
 }
 
 function renderGunMarkerSector(markerKey, marker, actions) {
@@ -636,8 +649,7 @@ function rotateGunMarker(canvas, button, markerKey, marker, actions, event) {
     const point = getMapCanvasPoint(canvas, moveEvent);
     if (!point) return;
     angle = Math.atan2(point.y - getGunY(marker), point.x - getGunX(marker)) * 180 / Math.PI;
-    const path = canvas.querySelector(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-path`);
-    path?.setAttribute("d", buildGunSectorPath({ ...marker, angle }));
+    updateGunSectorPath(canvas, markerId, { ...marker, angle });
     button.dataset.dragged = "true";
   };
   const finish = (upEvent) => {
