@@ -26,8 +26,8 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.45";
+  const GUN_MARKER_DRAG_SENSITIVITY = 1;
+  const APP_VERSION = "Ver1.46";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -966,7 +966,7 @@ function normalizeMapSlotState(slot = {}) {
     stage: typeof slot.stage === "string" && slot.stage ? slot.stage : "リュウグウターミナル",
     variant: typeof slot.variant === "string" ? slot.variant : "",
     waterVisible: typeof slot.waterVisible === "boolean" ? slot.waterVisible : true,
-    marker: normalizeMapMarkerId(slot.marker),
+    marker: slot.marker ? normalizeMapMarkerId(slot.marker) : "gun",
   };
 }
 

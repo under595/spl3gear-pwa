@@ -66,8 +66,8 @@
       mapRule: "tower",
       mapImageType: "white",
       mapSlots: [
-        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "pin" },
-        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "pin" },
+        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "gun" },
+        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "gun" },
       ],
       favoriteMaps: [],
       mapMarkers: {},

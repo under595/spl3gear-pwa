@@ -263,7 +263,7 @@
   }
 
   function normalizeMapSlots(source) {
-    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "pin" };
+    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "gun" };
     const sourceSlots = Array.isArray(source.mapSlots) ? source.mapSlots : [
       { stage: source.mapStage, variant: "" },
     ];
@@ -271,7 +271,7 @@
       stage: typeof slot?.stage === "string" && slot.stage ? slot.stage : fallback.stage,
       variant: typeof slot?.variant === "string" ? slot.variant : "",
       waterVisible: typeof slot?.waterVisible === "boolean" ? slot.waterVisible : true,
-      marker: normalizeMarker(slot?.marker),
+      marker: slot?.marker ? normalizeMarker(slot.marker) : fallback.marker,
     }));
     while (slots.length < 2) slots.push({ ...fallback });
     return slots;
