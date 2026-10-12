@@ -9,6 +9,14 @@
   const REFRESH_PENDING_KEY = "spl3gear-simulator-refresh-pending-v1";
   const DRAG_START_DELAY_MS = 110;
   const SLOT_LONG_PRESS_MS = 260;
+  const DEFAULT_GUN_MARKER_RANGE = 24;
+  const MAP_GUN_MARKER_RANGES = {
+    "ユノハナ大渓谷": 23, "ゴンズイ地区": 24, "ヤガラ市場": 22, "マテガイ放水路": 25, "ナメロウ金属": 23,
+    "マサバ海峡大橋": 26, "キンメダイ美術館": 22, "マヒマヒリゾート＆スパ": 21, "海女美術大学": 24, "チョウザメ造船": 25,
+    "ザトウマーケット": 23, "スメーシーワールド": 22, "クサヤ温泉": 24, "ヒラメが丘団地": 23, "ナンプラー遺跡": 24,
+    "マンタマリア号": 25, "タラポートショッピングパーク": 24, "コンブトラック": 23, "タカアシ経済特区": 25, "オヒョウ海運": 24,
+    "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
+  };
 
   const root = document.querySelector("#gearSimulator");
   const defaultWeapon = WEAPON_DATAS["わかばシューター"] ? "わかばシューター" : Object.keys(WEAPON_DATAS)[0];
@@ -44,8 +52,9 @@
     selectMapVariant(slotIndex, variant) { updateMapSlot(state, slotIndex, { variant: variant || "" }); redraw(); },
     setMapWaterVisible(slotIndex, value) { updateMapSlot(state, slotIndex, { waterVisible: Boolean(value) }); redraw(); },
     selectMapMarker(slotIndex, marker) { updateMapSlot(state, slotIndex, { marker: normalizeMarker(marker) }); redraw(); },
-    placeMapMarker(key, marker, x, y) { placeMapMarker(state, key, marker, x, y); redraw(); },
+    placeMapMarker(key, marker, x, y, options) { placeMapMarker(state, key, marker, x, y, options); redraw(); },
     moveMapMarker(key, id, x, y) { moveMapMarker(state, key, id, x, y); redraw(); },
+    updateMapMarker(key, id, changes) { updateMapMarker(state, key, id, changes); redraw(); },
     removeMapMarker(key, id) { removeMapMarker(state, key, id); redraw(); },
     toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
@@ -301,23 +310,28 @@
           marker: normalizeMarker(item.marker),
           x: Math.max(0, Math.min(100, Number(item.x) || 0)),
           y: Math.max(0, Math.min(100, Number(item.y) || 0)),
+          angle: Number.isFinite(Number(item.angle)) ? Number(item.angle) : -90,
+          range: Math.max(6, Math.min(80, Number(item.range) || defaultGunMarkerRange(key))),
         }));
     }
     return normalized;
   }
 
-  function placeMapMarker(current, key, marker, x, y) {
+  function placeMapMarker(current, key, marker, x, y, options = {}) {
     if (typeof key !== "string" || !key) return;
     current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
     const list = current.mapMarkers[key] || [];
     if (list.length >= 32) return;
+    const markerId = normalizeMarker(marker);
     current.mapMarkers[key] = [
       ...list,
       {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        marker: normalizeMarker(marker),
+        marker: markerId,
         x: Math.max(0, Math.min(100, Number(x) || 0)),
         y: Math.max(0, Math.min(100, Number(y) || 0)),
+        angle: Number.isFinite(Number(options.angle)) ? Number(options.angle) : -90,
+        range: markerId === "gun" ? Math.max(6, Math.min(80, Number(options.range) || defaultGunMarkerRange(key))) : defaultGunMarkerRange(key),
       },
     ];
   }
@@ -339,6 +353,24 @@
         y: Math.max(0, Math.min(100, Number(y) || 0)),
       };
     });
+  }
+
+  function updateMapMarker(current, key, id, changes = {}) {
+    if (typeof key !== "string" || typeof id !== "string") return;
+    current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
+    current.mapMarkers[key] = (current.mapMarkers[key] || []).map((item) => {
+      if (item.id !== id) return item;
+      return {
+        ...item,
+        angle: Number.isFinite(Number(changes.angle)) ? Number(changes.angle) : item.angle,
+        range: Number.isFinite(Number(changes.range)) ? Math.max(6, Math.min(80, Number(changes.range))) : item.range,
+      };
+    });
+  }
+
+  function defaultGunMarkerRange(key) {
+    const stage = typeof key === "string" ? key.split("|").slice(1).join("|") : "";
+    return MAP_GUN_MARKER_RANGES[stage] || DEFAULT_GUN_MARKER_RANGE;
   }
 
   function normalizeVisibleGroups(groups) {

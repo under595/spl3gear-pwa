@@ -17,7 +17,16 @@
     { id: "warning", symbol: "⚠️", label: "注意", file: "warning.png" },
   ];
   const MAP_MARKER_LIMIT = 32;
-  const APP_VERSION = "Ver1.34";
+  const DEFAULT_GUN_MARKER_RANGE = 24;
+  const MAP_GUN_MARKER_RANGES = {
+    "ユノハナ大渓谷": 23, "ゴンズイ地区": 24, "ヤガラ市場": 22, "マテガイ放水路": 25, "ナメロウ金属": 23,
+    "マサバ海峡大橋": 26, "キンメダイ美術館": 22, "マヒマヒリゾート＆スパ": 21, "海女美術大学": 24, "チョウザメ造船": 25,
+    "ザトウマーケット": 23, "スメーシーワールド": 22, "クサヤ温泉": 24, "ヒラメが丘団地": 23, "ナンプラー遺跡": 24,
+    "マンタマリア号": 25, "タラポートショッピングパーク": 24, "コンブトラック": 23, "タカアシ経済特区": 25, "オヒョウ海運": 24,
+    "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
+  };
+  const GUN_MARKER_SPREAD_DEGREES = 30;
+  const APP_VERSION = "Ver1.35";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -440,7 +449,11 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
           markerKey,
           selectedMarker,
           ((event.clientX - rect.left) / rect.width) * 100,
-          ((event.clientY - rect.top) / rect.height) * 100
+          ((event.clientY - rect.top) / rect.height) * 100,
+          {
+            angle: -90,
+            range: selectedMarker === "gun" ? getDefaultGunMarkerRange(stage) : undefined,
+          }
         );
       });
     }
@@ -451,7 +464,10 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
     });
     canvas.append(image);
     if (imageType === "white") {
-      for (const marker of markers) canvas.append(renderMapMarker(markerKey, marker, actions));
+      for (const marker of markers) {
+        if (normalizeMapMarkerId(marker.marker) === "gun") canvas.append(renderGunMarkerSector(markerKey, marker, actions));
+        canvas.append(renderMapMarker(markerKey, marker, actions));
+      }
     }
     viewer.append(canvas);
   } else {
@@ -485,20 +501,27 @@ function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions)
 
 function renderMapMarker(markerKey, marker, actions) {
   const markerId = typeof marker.id === "string" ? marker.id : "";
+  const markerType = normalizeMapMarkerId(marker.marker);
   const button = createElement("button", "map-marker", {
     type: "button",
-    title: "ドラッグで移動 / クリックで削除",
+    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグで角度変更 / クリックで削除" : "ドラッグで移動 / クリックで削除",
     "aria-label": "マーカーを移動または削除",
+    "data-marker-id": markerId,
   });
   button.append(createMapMarkerImage(marker.marker, "map-marker-img"));
   button.style.left = `${Math.max(0, Math.min(100, Number(marker.x) || 0))}%`;
   button.style.top = `${Math.max(0, Math.min(100, Number(marker.y) || 0))}%`;
+  button.addEventListener("contextmenu", (event) => event.preventDefault());
   button.addEventListener("pointerdown", (event) => {
-    if (event.button !== undefined && event.button !== 0) return;
     event.preventDefault();
     event.stopPropagation();
     const canvas = button.closest(".map-canvas");
     if (!canvas) return;
+    if (event.button === 2 && markerType === "gun") {
+      rotateGunMarker(canvas, button, markerKey, marker, actions, event);
+      return;
+    }
+    if (event.button !== undefined && event.button !== 0) return;
     button.setPointerCapture?.(event.pointerId);
     const startX = event.clientX;
     const startY = event.clientY;
@@ -553,6 +576,88 @@ function renderMapMarker(markerKey, marker, actions) {
     actions.removeMapMarker(markerKey, marker.id);
   });
   return button;
+}
+
+function renderGunMarkerSector(markerKey, marker, actions) {
+  const markerId = typeof marker.id === "string" ? marker.id : "";
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "map-gun-sector");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("data-marker-id", markerId);
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("class", "map-gun-sector-path");
+  path.setAttribute("d", buildGunSectorPath(marker));
+  path.addEventListener("contextmenu", (event) => event.preventDefault());
+  path.addEventListener("pointerdown", (event) => {
+    if (event.button !== undefined && event.button !== 2) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const canvas = svg.closest(".map-canvas");
+    if (!canvas) return;
+    path.setPointerCapture?.(event.pointerId);
+    let range = getGunRange(marker);
+    const update = (moveEvent) => {
+      if (moveEvent.pointerId !== event.pointerId) return;
+      const point = getMapCanvasPoint(canvas, moveEvent);
+      if (!point) return;
+      range = Math.max(6, Math.min(80, Math.hypot(point.x - getGunX(marker), point.y - getGunY(marker))));
+      path.setAttribute("d", buildGunSectorPath({ ...marker, range }));
+    };
+    const finish = (upEvent) => {
+      if (upEvent.pointerId !== event.pointerId) return;
+      path.removeEventListener("pointermove", update);
+      path.removeEventListener("pointerup", finish);
+      path.removeEventListener("pointercancel", cancel);
+      path.releasePointerCapture?.(event.pointerId);
+      actions.updateMapMarker(markerKey, markerId, { range });
+    };
+    const cancel = (cancelEvent) => {
+      if (cancelEvent.pointerId !== event.pointerId) return;
+      path.removeEventListener("pointermove", update);
+      path.removeEventListener("pointerup", finish);
+      path.removeEventListener("pointercancel", cancel);
+      path.releasePointerCapture?.(event.pointerId);
+    };
+    path.addEventListener("pointermove", update);
+    path.addEventListener("pointerup", finish);
+    path.addEventListener("pointercancel", cancel);
+  });
+  svg.append(path);
+  return svg;
+}
+
+function rotateGunMarker(canvas, button, markerKey, marker, actions, event) {
+  const markerId = typeof marker.id === "string" ? marker.id : "";
+  button.setPointerCapture?.(event.pointerId);
+  let angle = getGunAngle(marker);
+  const update = (moveEvent) => {
+    if (moveEvent.pointerId !== event.pointerId) return;
+    const point = getMapCanvasPoint(canvas, moveEvent);
+    if (!point) return;
+    angle = Math.atan2(point.y - getGunY(marker), point.x - getGunX(marker)) * 180 / Math.PI;
+    const path = canvas.querySelector(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-path`);
+    path?.setAttribute("d", buildGunSectorPath({ ...marker, angle }));
+    button.dataset.dragged = "true";
+  };
+  const finish = (upEvent) => {
+    if (upEvent.pointerId !== event.pointerId) return;
+    button.removeEventListener("pointermove", update);
+    button.removeEventListener("pointerup", finish);
+    button.removeEventListener("pointercancel", cancel);
+    button.releasePointerCapture?.(event.pointerId);
+    actions.updateMapMarker(markerKey, markerId, { angle });
+  };
+  const cancel = (cancelEvent) => {
+    if (cancelEvent.pointerId !== event.pointerId) return;
+    button.removeEventListener("pointermove", update);
+    button.removeEventListener("pointerup", finish);
+    button.removeEventListener("pointercancel", cancel);
+    button.releasePointerCapture?.(event.pointerId);
+  };
+  button.addEventListener("pointermove", update);
+  button.addEventListener("pointerup", finish);
+  button.addEventListener("pointercancel", cancel);
 }
 
 function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
@@ -631,6 +736,50 @@ function createMapMarkerImage(marker, className) {
     alt: getMapMarkerSymbol(marker),
     draggable: "false",
   });
+}
+
+function buildGunSectorPath(marker) {
+  const x = getGunX(marker);
+  const y = getGunY(marker);
+  const range = getGunRange(marker);
+  const angle = getGunAngle(marker);
+  const half = GUN_MARKER_SPREAD_DEGREES / 2;
+  const start = (angle - half) * Math.PI / 180;
+  const end = (angle + half) * Math.PI / 180;
+  const x1 = x + Math.cos(start) * range;
+  const y1 = y + Math.sin(start) * range;
+  const x2 = x + Math.cos(end) * range;
+  const y2 = y + Math.sin(end) * range;
+  return `M ${x.toFixed(3)} ${y.toFixed(3)} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${range.toFixed(3)} ${range.toFixed(3)} 0 0 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`;
+}
+
+function getMapCanvasPoint(canvas, event) {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  return {
+    x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
+    y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+  };
+}
+
+function getDefaultGunMarkerRange(stage) {
+  return MAP_GUN_MARKER_RANGES[stage] || DEFAULT_GUN_MARKER_RANGE;
+}
+
+function getGunX(marker) {
+  return Math.max(0, Math.min(100, Number(marker.x) || 0));
+}
+
+function getGunY(marker) {
+  return Math.max(0, Math.min(100, Number(marker.y) || 0));
+}
+
+function getGunAngle(marker) {
+  return Number.isFinite(Number(marker.angle)) ? Number(marker.angle) : -90;
+}
+
+function getGunRange(marker) {
+  return Math.max(6, Math.min(80, Number(marker.range) || DEFAULT_GUN_MARKER_RANGE));
 }
 
 function groupMapVariants(rule) {
