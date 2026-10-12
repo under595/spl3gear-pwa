@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.23";
+  const APP_VERSION = "Ver1.24";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -345,9 +345,11 @@ function renderMapPage(state, actions) {
 
 function renderMapSet(state, actions, rule, groups, slotIndex) {
   const slot = normalizeMapSlotState(state.mapSlots && state.mapSlots[slotIndex]);
-  const group = groups.find((item) => item.base === slot.stage) || groups.find((item) => item.base === "リュウグウターミナル") || groups[0] || null;
+  const parsedStage = parseMapVariant(slot.stage);
+  const group = groups.find((item) => item.base === parsedStage.base) || groups.find((item) => item.base === slot.stage) || groups.find((item) => item.base === "リュウグウターミナル") || groups[0] || null;
   const stage = group ? group.base : "";
-  const variant = group && group.variants.some((item) => item.variant === slot.variant) ? slot.variant : "";
+  const requestedVariant = slot.variant || parsedStage.variant;
+  const variant = group && group.variants.some((item) => item.variant === requestedVariant) ? requestedVariant : "";
   const current = group && (group.variants.find((item) => item.variant === variant) || group.variants[0]);
   const rangeMode = slot.rangeMode === "without" ? "without" : "with";
   const imagePath = current && (current.images[rangeMode] || current.images.with || current.images.without);
@@ -476,6 +478,7 @@ function uniqueMapVariants(variants) {
 function parseMapVariant(label) {
   const normalized = label.replace(/\s+/g, "　").trim();
   const patterns = [
+    /^(.*?)　((?:カウント(?:ストップ時|進行時|進行時（自・敵共）|50未満|50経過後|50未満,経過後|60未満|60経過後|60未満,経過後)|カンモン突破(?:前|後|前,後))　水表記なし)$/,
     /^(.*?)　(その[１２12](?:,[２2])?)$/,
     /^(.*?)　(水表記なし)$/,
     /^(.*?)　(秒数表記(?:あり|なし))$/,
@@ -492,11 +495,15 @@ function parseMapVariant(label) {
 }
 
 function normalizeVariantLabel(value) {
-  return value.replace(/[１２]/g, (char) => char === "１" ? "1" : "2");
+  return value
+    .replace(/[１２]/g, (char) => char === "１" ? "1" : "2")
+    .replace("　水表記なし", "（水表記なし）");
 }
 
 function variantRank(variant) {
   if (!variant) return 0;
+  if (/カウント進行時/.test(variant)) return variant.includes("水表記なし") ? 2 : 1;
+  if (/カウントストップ時/.test(variant)) return variant.includes("水表記なし") ? 4 : 3;
   if (/その1$|突破前$|未満$|干潮時$|下層$|カウント進行時$/.test(variant)) return 1;
   if (/その1,2|前,後|未満,経過後|満潮時,干潮時|上下層/.test(variant)) return 2;
   if (/その2$|突破後$|経過後$|満潮時$|上層$|ストップ時/.test(variant)) return 3;
