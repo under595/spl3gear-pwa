@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.25";
+  const APP_VERSION = "Ver1.26";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -349,7 +349,9 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   const group = groups.find((item) => item.base === parsedStage.base) || groups.find((item) => item.base === slot.stage) || groups.find((item) => item.base === "リュウグウターミナル") || groups[0] || null;
   const stage = group ? group.base : "";
   const requestedVariant = slot.variant || parsedStage.variant;
-  const variant = group && group.variants.some((item) => item.variant === requestedVariant) ? requestedVariant : "";
+  const selectedState = getMapStateVariant(requestedVariant);
+  const waterVisible = typeof slot.waterVisible === "boolean" ? slot.waterVisible : !isWaterlessMapVariant(requestedVariant);
+  const variant = group ? resolveMapVariant(group, selectedState, waterVisible) : "";
   const current = group && (group.variants.find((item) => item.variant === variant) || group.variants[0]);
   const rangeMode = slot.rangeMode === "without" ? "without" : "with";
   const imagePath = current && (current.images[rangeMode] || current.images.with || current.images.without);
@@ -421,23 +423,31 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   }
 
   section.append(controls, rangeSwitch, viewer);
-  if (group) section.append(renderVariantChoices(group, variant, slotIndex, actions));
+  if (group) section.append(renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions));
   return section;
 }
 
-function renderVariantChoices(group, selectedVariant, slotIndex, actions) {
+function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
   const wrap = createElement("div", "map-variant-panel");
   const list = createElement("div", "map-variant-list", { role: "group", "aria-label": "マップバリエーション" });
-  for (const item of group.variants) {
+  const stateVariants = getMapStateVariants(group);
+  for (const variant of stateVariants) {
     const label = createElement("label", "map-variant-choice");
-    const input = createElement("input", "", { type: "checkbox", value: item.variant });
-    input.checked = item.variant === selectedVariant;
-    input.disabled = group.variants.length === 1;
-    input.addEventListener("change", () => actions.selectMapVariant(slotIndex, item.variant));
-    label.append(input, createElement("span", "", { text: item.variant || "標準" }));
+    const input = createElement("input", "", { type: "checkbox", value: variant });
+    input.checked = variant === selectedState;
+    input.disabled = stateVariants.length === 1;
+    input.addEventListener("change", () => actions.selectMapVariant(slotIndex, variant));
+    label.append(input, createElement("span", "", { text: variant || "標準" }));
     list.append(label);
   }
-  wrap.append(list);
+  const water = getMapWaterAvailability(group, selectedState);
+  const waterLabel = createElement("label", "map-variant-choice");
+  const waterInput = createElement("input", "", { type: "checkbox" });
+  waterInput.checked = water.hasWater && waterVisible;
+  waterInput.disabled = !water.hasWater || !water.hasWaterless;
+  waterInput.addEventListener("change", () => actions.setMapWaterVisible(slotIndex, waterInput.checked));
+  waterLabel.append(waterInput, createElement("span", "", { text: "水表示" }));
+  wrap.append(list, waterLabel);
   return wrap;
 }
 
@@ -479,6 +489,49 @@ function uniqueMapVariants(variants) {
     seen.add(key);
     return true;
   });
+}
+
+function getMapStateVariants(group) {
+  const seen = new Set();
+  return group.variants
+    .map((item) => getMapStateVariant(item.variant))
+    .filter((variant) => variant !== "A3版")
+    .filter((variant) => {
+      if (seen.has(variant)) return false;
+      seen.add(variant);
+      return true;
+    });
+}
+
+function getMapStateVariant(variant) {
+  if (!variant || variant === "水表記なし") return "";
+  return variant.replace("（水表記なし）", "");
+}
+
+function isWaterlessMapVariant(variant) {
+  return variant === "水表記なし" || variant.includes("（水表記なし）");
+}
+
+function toWaterlessMapVariant(stateVariant) {
+  return stateVariant ? `${stateVariant}（水表記なし）` : "水表記なし";
+}
+
+function getMapWaterAvailability(group, stateVariant) {
+  const waterless = toWaterlessMapVariant(stateVariant);
+  return {
+    hasWater: group.variants.some((item) => getMapStateVariant(item.variant) === stateVariant && !isWaterlessMapVariant(item.variant)),
+    hasWaterless: group.variants.some((item) => item.variant === waterless),
+  };
+}
+
+function resolveMapVariant(group, stateVariant, waterVisible) {
+  const stateVariants = getMapStateVariants(group);
+  const normalizedState = stateVariants.includes(stateVariant) ? stateVariant : (stateVariants[0] || "");
+  const waterless = toWaterlessMapVariant(normalizedState);
+  if (!waterVisible && group.variants.some((item) => item.variant === waterless)) return waterless;
+  if (group.variants.some((item) => item.variant === normalizedState)) return normalizedState;
+  if (group.variants.some((item) => item.variant === waterless)) return waterless;
+  return group.variants[0]?.variant || "";
 }
 
 function parseMapVariant(label) {
