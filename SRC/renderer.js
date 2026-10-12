@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.14";
+  const APP_VERSION = "Ver1.15";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -413,9 +413,18 @@ function mainDetailSummary(results) {
   const mainInk = mainDamage && mainDamage.values && mainDamage.values.find((item) => item.label === "1発インク");
   const range = findRangeValue(mainDamage);
   return [
-    mainInk ? `メイン1発 ${mainInk.value}` : "",
-    range ? `${range.label} ${range.value}` : "",
+    mainInk ? `消費${mainInk.value}` : "",
+    range ? compactRangeSummary(range.value) : "",
   ].filter(Boolean).join(" / ");
+}
+
+function compactRangeSummary(value) {
+  return `射程${String(value || "")
+    .replace(/有効射程/g, "")
+    .replace(/確定数維持射程/g, "確定射程")
+    .replace(/スライド後の/g, "SL後")
+    .replace(/立ち撃ち時/g, "立ち")
+    .replace(/\s+/g, "")}`;
 }
 
 function renderRangeComparison(state, actions) {
