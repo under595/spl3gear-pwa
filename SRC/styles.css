@@ -326,6 +326,7 @@ button { cursor: pointer; }
   stroke: transparent;
   stroke-width: 8;
   pointer-events: all;
+  touch-action: none;
   cursor: ew-resize;
 }
 

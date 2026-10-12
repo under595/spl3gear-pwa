@@ -27,7 +27,7 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.40";
+  const APP_VERSION = "Ver1.41";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -607,7 +607,7 @@ function renderGunMarkerSector(markerKey, marker, actions) {
   linePath.setAttribute("d", buildGunSectorPath(marker));
   hitPath.addEventListener("contextmenu", (event) => event.preventDefault());
   hitPath.addEventListener("pointerdown", (event) => {
-    if (event.button !== undefined && event.button !== 2) return;
+    if (!isGunSectorTransformPointer(event)) return;
     event.preventDefault();
     event.stopPropagation();
     const canvas = svg.closest(".map-canvas");
@@ -670,6 +670,11 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   target.addEventListener("pointermove", update);
   target.addEventListener("pointerup", finish);
   target.addEventListener("pointercancel", cancel);
+}
+
+function isGunSectorTransformPointer(event) {
+  if (event.pointerType === "mouse") return event.button === 2;
+  return event.button === undefined || event.button === 0;
 }
 
 function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
