@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.24";
+  const APP_VERSION = "Ver1.25";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -369,6 +369,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   ruleSelect.addEventListener("change", (event) => actions.selectMapRule(event.target.value));
 
   const stageSelect = createElement("select", "map-stage-select", { "aria-label": `マップ名を選択 ${slotIndex + 1}` });
+  const stageNumbers = new Map(groups.map((item, index) => [item.base, formatMapStageNumber(index)]));
   const favorites = (state.favoriteMaps || [])
     .map((key) => key.split("|"))
     .filter(([favRule, favStage]) => favRule === rule && groups.some((item) => item.base === favStage))
@@ -376,13 +377,13 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   if (favorites.length) {
     const favGroup = document.createElement("optgroup");
     favGroup.label = "★ お気に入り";
-    for (const name of favorites) favGroup.append(createMapOption(name, stage, true));
+    for (const name of favorites) favGroup.append(createMapOption(name, stage, true, stageNumbers.get(name)));
     stageSelect.append(favGroup);
   }
   const normalGroup = document.createElement("optgroup");
   normalGroup.label = "マップ";
   for (const item of groups) {
-    if (!favorites.includes(item.base)) normalGroup.append(createMapOption(item.base, stage, false));
+    if (!favorites.includes(item.base)) normalGroup.append(createMapOption(item.base, stage, false, stageNumbers.get(item.base)));
   }
   if (normalGroup.children.length) stageSelect.append(normalGroup);
   stageSelect.addEventListener("change", (event) => actions.selectMapStage(slotIndex, event.target.value));
@@ -440,12 +441,17 @@ function renderVariantChoices(group, selectedVariant, slotIndex, actions) {
   return wrap;
 }
 
-function createMapOption(name, selectedName, favorite) {
+function createMapOption(name, selectedName, favorite, number) {
   const option = document.createElement("option");
+  const prefix = typeof number === "string" ? `${number} ` : "";
   option.value = name;
-  option.textContent = favorite ? `★ ${name}` : name;
+  option.textContent = favorite ? `★ ${prefix}${name}` : `${prefix}${name}`;
   option.selected = name === selectedName;
   return option;
+}
+
+function formatMapStageNumber(index) {
+  return String(index).padStart(2, "0");
 }
 
 function groupMapVariants(rule) {
