@@ -260,7 +260,12 @@ button { cursor: pointer; }
   border: 1px solid #151515;
   border-radius: 4px;
   background: var(--accent);
-  font-size: 18px;
+}
+
+.map-marker-current img {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .map-marker-count {
@@ -287,21 +292,27 @@ button { cursor: pointer; }
   touch-action: none;
   cursor: grab;
   transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border: 2px solid #101010;
-  border-radius: 50%;
-  background: rgba(255,255,255,.9);
-  box-shadow: 0 2px 4px rgba(0,0,0,.55);
-  font-size: 18px;
-  line-height: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   z-index: 2;
 }
 
 .map-marker:active {
   cursor: grabbing;
+}
+
+.map-marker-img {
+  width: 30px;
+  height: 30px;
+  display: block;
+  pointer-events: none;
+  user-select: none;
 }
 
 .map-empty {

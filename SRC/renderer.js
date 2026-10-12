@@ -7,17 +7,17 @@
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
   const MAP_MARKERS = [
-    { id: "pin", symbol: "📍", label: "ピン" },
-    { id: "red", symbol: "🔴", label: "赤" },
-    { id: "yellow", symbol: "🟡", label: "黄" },
-    { id: "green", symbol: "🟢", label: "緑" },
-    { id: "blue", symbol: "🔵", label: "青" },
-    { id: "star", symbol: "⭐", label: "注目" },
-    { id: "gun", symbol: "🔫", label: "射線" },
-    { id: "warning", symbol: "⚠️", label: "注意" },
+    { id: "pin", symbol: "📍", label: "ピン", file: "pin.png" },
+    { id: "red", symbol: "🔴", label: "赤", file: "red.png" },
+    { id: "yellow", symbol: "🟡", label: "黄", file: "yellow.png" },
+    { id: "green", symbol: "🟢", label: "緑", file: "green.png" },
+    { id: "blue", symbol: "🔵", label: "青", file: "blue.png" },
+    { id: "star", symbol: "⭐", label: "注目", file: "star.png" },
+    { id: "gun", symbol: "🔫", label: "射線", file: "gun.png" },
+    { id: "warning", symbol: "⚠️", label: "注意", file: "warning.png" },
   ];
   const MAP_MARKER_LIMIT = 32;
-  const APP_VERSION = "Ver1.33";
+  const APP_VERSION = "Ver1.34";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -476,7 +476,9 @@ function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions)
     select.append(option);
   }
   select.addEventListener("change", (event) => actions.selectMapMarker(slotIndex, event.target.value));
-  wrap.append(select, createElement("span", "map-marker-current", { text: getMapMarkerSymbol(selectedMarker) }));
+  const current = createElement("span", "map-marker-current");
+  current.append(createMapMarkerImage(selectedMarker, ""));
+  wrap.append(select, current);
   wrap.append(createElement("span", "map-marker-count", { text: `${markerCount}/${MAP_MARKER_LIMIT}` }));
   return wrap;
 }
@@ -485,10 +487,10 @@ function renderMapMarker(markerKey, marker, actions) {
   const markerId = typeof marker.id === "string" ? marker.id : "";
   const button = createElement("button", "map-marker", {
     type: "button",
-    text: getMapMarkerSymbol(marker.marker),
     title: "ドラッグで移動 / クリックで削除",
     "aria-label": "マーカーを移動または削除",
   });
+  button.append(createMapMarkerImage(marker.marker, "map-marker-img"));
   button.style.left = `${Math.max(0, Math.min(100, Number(marker.x) || 0))}%`;
   button.style.top = `${Math.max(0, Math.min(100, Number(marker.y) || 0))}%`;
   button.addEventListener("pointerdown", (event) => {
@@ -616,6 +618,19 @@ function normalizeMapMarkerId(marker) {
 function getMapMarkerSymbol(marker) {
   const markerId = normalizeMapMarkerId(marker);
   return MAP_MARKERS.find((item) => item.id === markerId)?.symbol || "📍";
+}
+
+function getMapMarkerFile(marker) {
+  const markerId = normalizeMapMarkerId(marker);
+  return MAP_MARKERS.find((item) => item.id === markerId)?.file || "pin.png";
+}
+
+function createMapMarkerImage(marker, className) {
+  return createElement("img", className, {
+    src: `./asset/marker/${getMapMarkerFile(marker)}`,
+    alt: getMapMarkerSymbol(marker),
+    draggable: "false",
+  });
 }
 
 function groupMapVariants(rule) {

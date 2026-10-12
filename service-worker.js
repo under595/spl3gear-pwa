@@ -1,4 +1,4 @@
-const CACHE_VERSION = "spl3gear-pwa-v41";
+const CACHE_VERSION = "spl3gear-pwa-v42";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -18,7 +18,15 @@ const APP_SHELL = [
   "./asset/asset_manifest.json",
   "./asset/pwa/icon-180.png",
   "./asset/pwa/icon-192.png",
-  "./asset/pwa/icon-512.png"
+  "./asset/pwa/icon-512.png",
+  "./asset/marker/pin.png",
+  "./asset/marker/red.png",
+  "./asset/marker/yellow.png",
+  "./asset/marker/green.png",
+  "./asset/marker/blue.png",
+  "./asset/marker/star.png",
+  "./asset/marker/gun.png",
+  "./asset/marker/warning.png"
 ];
 
 self.addEventListener("install", (event) => {
