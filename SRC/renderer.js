@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.18";
+  const APP_VERSION = "Ver1.19";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -318,13 +318,33 @@ function createWeaponCategorySelect(state, actions) {
   for (const item of weaponCategoryOptions()) {
     const option = document.createElement("option");
     option.value = item.value;
-    option.textContent = `${item.code} ${item.label}`;
+    option.textContent = item.value === normalizeWeaponCategory(state.weaponCategory) ? item.code : `${item.code} ${item.label}`;
+    option.dataset.code = item.code;
+    option.dataset.label = item.label;
     option.selected = item.value === normalizeWeaponCategory(state.weaponCategory);
     option.title = item.label;
     select.append(option);
   }
-  select.addEventListener("change", (event) => actions.selectWeaponCategory(event.target.value));
+  select.addEventListener("pointerdown", () => expandWeaponCategoryOptions(select));
+  select.addEventListener("focus", () => expandWeaponCategoryOptions(select));
+  select.addEventListener("change", (event) => {
+    collapseWeaponCategoryOptions(select);
+    actions.selectWeaponCategory(event.target.value);
+  });
+  select.addEventListener("blur", () => collapseWeaponCategoryOptions(select));
   return select;
+}
+
+function expandWeaponCategoryOptions(select) {
+  for (const option of select.options) {
+    option.textContent = `${option.dataset.code} ${option.dataset.label}`;
+  }
+}
+
+function collapseWeaponCategoryOptions(select) {
+  for (const option of select.options) {
+    option.textContent = option.selected ? option.dataset.code : `${option.dataset.code} ${option.dataset.label}`;
+  }
 }
 
 function weaponCategoryOptions() {
