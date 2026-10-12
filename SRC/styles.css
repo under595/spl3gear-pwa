@@ -234,12 +234,6 @@ button { cursor: pointer; }
   gap: 6px;
 }
 
-.map-variant-title {
-  justify-self: end;
-  color: var(--muted);
-  font-size: 11px;
-}
-
 .map-variant-list {
   display: flex;
   flex-wrap: wrap;

@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.22";
+  const APP_VERSION = "Ver1.23";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -424,7 +424,6 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
 
 function renderVariantChoices(group, selectedVariant, slotIndex, actions) {
   const wrap = createElement("div", "map-variant-panel");
-  wrap.append(createElement("strong", "map-variant-title", { text: "バリエーション" }));
   const list = createElement("div", "map-variant-list", { role: "group", "aria-label": "マップバリエーション" });
   for (const item of group.variants) {
     const label = createElement("label", "map-variant-choice");
