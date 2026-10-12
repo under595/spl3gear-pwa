@@ -149,7 +149,14 @@ button { cursor: pointer; }
 
 .map-page {
   display: grid;
+  gap: 14px;
+}
+
+.map-set {
+  display: grid;
   gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #111;
 }
 
 .map-bar {
@@ -220,6 +227,31 @@ button { cursor: pointer; }
   padding: 24px;
   color: var(--muted);
   font-weight: 700;
+}
+
+.map-variant-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.map-variant-choice {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid #171717;
+  border-radius: 4px;
+  color: #fff;
+  background: #2b2b2b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.map-variant-choice input {
+  accent-color: var(--accent);
 }
 
 .analyzer-controls {

@@ -39,8 +39,9 @@
     toggleSlotDisabled(slot) { toggleSlotDisabled(state, slot); redraw(); },
     togglePool() { state.poolVisible = !state.poolVisible; redraw(); },
     selectMapRule(rule) { state.mapRule = rule || "tower"; redraw(); },
-    selectMapStage(stage) { state.mapStage = stage || ""; redraw(); },
-    setMapRangeMode(mode) { state.mapRangeMode = mode === "without" ? "without" : "with"; redraw(); },
+    selectMapStage(slotIndex, stage) { updateMapSlot(state, slotIndex, { stage: stage || "", variant: "" }); redraw(); },
+    selectMapVariant(slotIndex, variant) { updateMapSlot(state, slotIndex, { variant: variant || "" }); redraw(); },
+    setMapRangeMode(slotIndex, mode) { updateMapSlot(state, slotIndex, { rangeMode: mode === "without" ? "without" : "with" }); redraw(); },
     toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
 
@@ -208,8 +209,7 @@
       }
       if (Number.isFinite(Number(saved.mainShotCount))) current.mainShotCount = Math.max(1, Math.min(10, Number(saved.mainShotCount)));
       if (typeof saved.mapRule === "string") current.mapRule = saved.mapRule;
-      if (typeof saved.mapStage === "string") current.mapStage = saved.mapStage;
-      if (saved.mapRangeMode === "with" || saved.mapRangeMode === "without") current.mapRangeMode = saved.mapRangeMode;
+      current.mapSlots = normalizeMapSlots(saved);
       if (Array.isArray(saved.favoriteMaps)) current.favoriteMaps = saved.favoriteMaps.filter((item) => typeof item === "string");
     } catch (error) {
       console.warn("Failed to restore simulator state", error);
@@ -240,10 +240,29 @@
       visibleGroups: normalizeVisibleGroups(current.visibleGroups),
       mainShotCount: current.mainShotCount,
       mapRule: current.mapRule,
-      mapStage: current.mapStage,
-      mapRangeMode: current.mapRangeMode,
+      mapSlots: normalizeMapSlots(current),
       favoriteMaps: current.favoriteMaps,
     };
+  }
+
+  function normalizeMapSlots(source) {
+    const fallback = { stage: "リュウグウターミナル", variant: "", rangeMode: "with" };
+    const sourceSlots = Array.isArray(source.mapSlots) ? source.mapSlots : [
+      { stage: source.mapStage, variant: "", rangeMode: source.mapRangeMode },
+    ];
+    const slots = sourceSlots.slice(0, 2).map((slot) => ({
+      stage: typeof slot?.stage === "string" && slot.stage ? slot.stage : fallback.stage,
+      variant: typeof slot?.variant === "string" ? slot.variant : "",
+      rangeMode: slot?.rangeMode === "without" ? "without" : "with",
+    }));
+    while (slots.length < 2) slots.push({ ...fallback });
+    return slots;
+  }
+
+  function updateMapSlot(current, slotIndex, changes) {
+    current.mapSlots = normalizeMapSlots(current);
+    const index = Math.max(0, Math.min(1, Math.floor(Number(slotIndex) || 0)));
+    current.mapSlots[index] = { ...current.mapSlots[index], ...changes };
   }
 
   function normalizeVisibleGroups(groups) {

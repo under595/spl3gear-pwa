@@ -64,8 +64,10 @@
       },
       mainShotCount: 5,
       mapRule: "tower",
-      mapStage: "リュウグウターミナル",
-      mapRangeMode: "with",
+      mapSlots: [
+        { stage: "リュウグウターミナル", variant: "", rangeMode: "with" },
+        { stage: "リュウグウターミナル", variant: "", rangeMode: "with" },
+      ],
       favoriteMaps: [],
     };
   }

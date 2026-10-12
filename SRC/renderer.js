@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.20";
+  const APP_VERSION = "Ver1.21";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -335,17 +335,28 @@ function renderWeaponBar(state, actions) {
 
 function renderMapPage(state, actions) {
   const rule = normalizeMapRule(state.mapRule);
-  const maps = MAP_DATA.maps[rule] || [];
-  const current = maps.find((item) => item.label === state.mapStage) || maps.find((item) => item.label === "リュウグウターミナル") || maps[0] || null;
-  const stage = current ? current.label : "";
-  const rangeMode = state.mapRangeMode === "without" ? "without" : "with";
+  const groups = groupMapVariants(rule);
+  const page = createElement("section", "map-page", { "aria-label": "スプラトゥーン3 マップ" });
+  for (let index = 0; index < 2; index++) {
+    page.append(renderMapSet(state, actions, rule, groups, index));
+  }
+  return page;
+}
+
+function renderMapSet(state, actions, rule, groups, slotIndex) {
+  const slot = normalizeMapSlotState(state.mapSlots && state.mapSlots[slotIndex]);
+  const group = groups.find((item) => item.base === slot.stage) || groups.find((item) => item.base === "リュウグウターミナル") || groups[0] || null;
+  const stage = group ? group.base : "";
+  const variant = group && group.variants.some((item) => item.variant === slot.variant) ? slot.variant : "";
+  const current = group && (group.variants.find((item) => item.variant === variant) || group.variants[0]);
+  const rangeMode = slot.rangeMode === "without" ? "without" : "with";
   const imagePath = current && (current.images[rangeMode] || current.images.with || current.images.without);
   const favoriteKey = `${rule}|${stage}`;
   const favoriteSet = new Set(state.favoriteMaps || []);
 
-  const page = createElement("section", "map-page", { "aria-label": "スプラトゥーン3 マップ" });
+  const section = createElement("article", "map-set");
   const controls = createElement("div", "map-bar");
-  const ruleSelect = createElement("select", "map-rule-select", { "aria-label": "ルール名を選択" });
+  const ruleSelect = createElement("select", "map-rule-select", { "aria-label": `ルール名を選択 ${slotIndex + 1}` });
   for (const item of MAP_DATA.rules) {
     const option = document.createElement("option");
     option.value = item.id;
@@ -355,24 +366,24 @@ function renderMapPage(state, actions) {
   }
   ruleSelect.addEventListener("change", (event) => actions.selectMapRule(event.target.value));
 
-  const stageSelect = createElement("select", "map-stage-select", { "aria-label": "マップ名を選択" });
+  const stageSelect = createElement("select", "map-stage-select", { "aria-label": `マップ名を選択 ${slotIndex + 1}` });
   const favorites = (state.favoriteMaps || [])
     .map((key) => key.split("|"))
-    .filter(([favRule, favStage]) => favRule === rule && maps.some((item) => item.label === favStage))
+    .filter(([favRule, favStage]) => favRule === rule && groups.some((item) => item.base === favStage))
     .map(([, favStage]) => favStage);
   if (favorites.length) {
-    const group = document.createElement("optgroup");
-    group.label = "★ お気に入り";
-    for (const name of favorites) group.append(createMapOption(name, stage, true));
-    stageSelect.append(group);
+    const favGroup = document.createElement("optgroup");
+    favGroup.label = "★ お気に入り";
+    for (const name of favorites) favGroup.append(createMapOption(name, stage, true));
+    stageSelect.append(favGroup);
   }
   const normalGroup = document.createElement("optgroup");
   normalGroup.label = "マップ";
-  for (const item of maps) {
-    if (!favorites.includes(item.label)) normalGroup.append(createMapOption(item.label, stage, false));
+  for (const item of groups) {
+    if (!favorites.includes(item.base)) normalGroup.append(createMapOption(item.base, stage, false));
   }
   if (normalGroup.children.length) stageSelect.append(normalGroup);
-  stageSelect.addEventListener("change", (event) => actions.selectMapStage(event.target.value));
+  stageSelect.addEventListener("change", (event) => actions.selectMapStage(slotIndex, event.target.value));
 
   const star = createElement("button", `favorite-weapon-toggle ${favoriteSet.has(favoriteKey) ? "is-active" : ""}`.trim(), {
     type: "button",
@@ -383,14 +394,14 @@ function renderMapPage(state, actions) {
   star.addEventListener("click", () => actions.toggleFavoriteMap(rule, stage));
   controls.append(ruleSelect, stageSelect, star);
 
-  const rangeSwitch = createElement("div", "map-range-switch", { role: "group", "aria-label": "ブキ射程表の表示" });
+  const rangeSwitch = createElement("div", "map-range-switch", { role: "group", "aria-label": `ブキ射程表の表示 ${slotIndex + 1}` });
   for (const [mode, label] of [["with", "射程表あり"], ["without", "射程表なし"]]) {
     const button = createElement("button", `map-range-button ${rangeMode === mode ? "is-active" : ""}`.trim(), {
       type: "button",
       text: label,
       "aria-pressed": String(rangeMode === mode),
     });
-    button.addEventListener("click", () => actions.setMapRangeMode(mode));
+    button.addEventListener("click", () => actions.setMapRangeMode(slotIndex, mode));
     rangeSwitch.append(button);
   }
 
@@ -398,7 +409,7 @@ function renderMapPage(state, actions) {
   if (imagePath) {
     const image = createElement("img", "map-image", {
       src: encodeURI(imagePath),
-      alt: `${ruleLabel(rule)} ${stage} ${rangeMode === "with" ? "ブキ射程表あり" : "ブキ射程表なし"}`,
+      alt: `${ruleLabel(rule)} ${stage}${variant ? ` ${variant}` : ""} ${rangeMode === "with" ? "ブキ射程表あり" : "ブキ射程表なし"}`,
       loading: "eager",
     });
     viewer.append(image);
@@ -406,8 +417,24 @@ function renderMapPage(state, actions) {
     viewer.append(createElement("div", "map-empty", { text: "この条件のマップ画像がありません" }));
   }
 
-  page.append(controls, rangeSwitch, viewer);
-  return page;
+  section.append(controls, rangeSwitch, viewer);
+  if (group && group.variants.length > 1) {
+    section.append(renderVariantChoices(group, variant, slotIndex, actions));
+  }
+  return section;
+}
+
+function renderVariantChoices(group, selectedVariant, slotIndex, actions) {
+  const wrap = createElement("div", "map-variant-list", { role: "group", "aria-label": "マップバリエーション" });
+  for (const item of group.variants) {
+    const label = createElement("label", "map-variant-choice");
+    const input = createElement("input", "", { type: "checkbox", value: item.variant });
+    input.checked = item.variant === selectedVariant;
+    input.addEventListener("change", () => actions.selectMapVariant(slotIndex, item.variant));
+    label.append(input, createElement("span", "", { text: item.variant || "標準" }));
+    wrap.append(label);
+  }
+  return wrap;
 }
 
 function createMapOption(name, selectedName, favorite) {
@@ -416,6 +443,72 @@ function createMapOption(name, selectedName, favorite) {
   option.textContent = favorite ? `★ ${name}` : name;
   option.selected = name === selectedName;
   return option;
+}
+
+function groupMapVariants(rule) {
+  const items = MAP_DATA.maps[rule] || [];
+  const groups = new Map();
+  for (const item of items) {
+    const parsed = parseMapVariant(item.label);
+    if (!groups.has(parsed.base)) groups.set(parsed.base, { base: parsed.base, variants: [] });
+    groups.get(parsed.base).variants.push({ ...item, variant: parsed.variant });
+  }
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      variants: uniqueMapVariants(group.variants)
+        .sort((a, b) => variantRank(a.variant) - variantRank(b.variant) || a.variant.localeCompare(b.variant, "ja")),
+    }))
+    .sort((a, b) => a.base.localeCompare(b.base, "ja"));
+}
+
+function uniqueMapVariants(variants) {
+  const seen = new Set();
+  return variants.filter((item) => {
+    const key = item.variant;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function parseMapVariant(label) {
+  const normalized = label.replace(/\s+/g, "　").trim();
+  const patterns = [
+    /^(.*?)　(その[１２12](?:,[２2])?)$/,
+    /^(.*?)　(水表記なし)$/,
+    /^(.*?)　(秒数表記(?:あり|なし))$/,
+    /^(.*?)　(A3版|おまけ|上層|下層|上下層)$/,
+    /^(.*?)　(干潮時|満潮時|満潮時,干潮時)$/,
+    /^(.*?)　(カウント(?:ストップ時|進行時|進行時（自・敵共）|50未満|50経過後|50未満,経過後|60未満|60経過後|60未満,経過後))$/,
+    /^(.*?)　(カンモン突破(?:前|後|前,後))$/,
+  ];
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match) return { base: match[1], variant: normalizeVariantLabel(match[2]) };
+  }
+  return { base: normalized, variant: "" };
+}
+
+function normalizeVariantLabel(value) {
+  return value.replace(/[１２]/g, (char) => char === "１" ? "1" : "2");
+}
+
+function variantRank(variant) {
+  if (!variant) return 0;
+  if (/その1$|突破前$|未満$|干潮時$|下層$|カウント進行時$/.test(variant)) return 1;
+  if (/その1,2|前,後|未満,経過後|満潮時,干潮時|上下層/.test(variant)) return 2;
+  if (/その2$|突破後$|経過後$|満潮時$|上層$|ストップ時/.test(variant)) return 3;
+  if (variant === "水表記なし") return 9;
+  return 5;
+}
+
+function normalizeMapSlotState(slot = {}) {
+  return {
+    stage: typeof slot.stage === "string" && slot.stage ? slot.stage : "リュウグウターミナル",
+    variant: typeof slot.variant === "string" ? slot.variant : "",
+    rangeMode: slot.rangeMode === "without" ? "without" : "with",
+  };
 }
 
 function normalizeMapRule(rule) {
