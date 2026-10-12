@@ -1,11 +1,12 @@
 (function () {
   const { GEARPOWER_DATAS, WEAPON_DATAS, SUB_DATAS, SPECIAL_DATAS } = window.SPL3_DATA;
+  const MAP_DATA = window.SPL3_MAP_DATA || { rules: [], maps: {} };
   const { PARTS, getSlotValue, isSlotDisabled } = window.SPL3.state;
   const { assetPath, createElement } = window.SPL3.utils;
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.19";
+  const APP_VERSION = "Ver1.20";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -16,8 +17,14 @@ function render(root, state, actions) {
     disabledSlots: state.disabledSlots,
   });
   root.replaceChildren();
+  const children = [renderTopTabs(state, actions)];
+  if (state.activeTab === "map") {
+    children.push(renderMapPage(state, actions), renderAppVersion(actions));
+    root.append(...children);
+    return;
+  }
   const visible = normalizedVisibleGroups(state.visibleGroups);
-  const children = [renderWeaponBar(state, actions)];
+  children.push(renderWeaponBar(state, actions));
   if (visible.weaponDetails) children.push(renderPinnedResults(results, state, actions));
   if (visible.rangeComparison) children.push(renderRangeComparison(state, actions));
   if (visible.efficiency) children.push(renderEfficiencyTest(state, actions));
@@ -25,6 +32,22 @@ function render(root, state, actions) {
   if (visible.analyzer) children.push(renderAnalyzerControls(state, actions));
   children.push(renderResults(results), renderOptionsGroup(state, actions), renderAppVersion(actions));
   root.append(...children);
+}
+
+function renderTopTabs(state, actions) {
+  const tabs = createElement("div", "top-tabs", { role: "tablist", "aria-label": "ページ切替" });
+  for (const [id, label] of [["gear", "ギア"], ["map", "マップ"]]) {
+    const selected = (state.activeTab || "gear") === id;
+    const button = createElement("button", `top-tab ${selected ? "is-active" : ""}`.trim(), {
+      type: "button",
+      role: "tab",
+      "aria-selected": String(selected),
+      text: label,
+    });
+    button.addEventListener("click", () => actions.setActiveTab(id));
+    tabs.append(button);
+  }
+  return tabs;
 }
 
 function normalizedVisibleGroups(groups) {
@@ -308,6 +331,100 @@ function renderWeaponBar(state, actions) {
   selectArea.append(categorySelect, select, star);
   wrap.append(icons, selectArea);
   return wrap;
+}
+
+function renderMapPage(state, actions) {
+  const rule = normalizeMapRule(state.mapRule);
+  const maps = MAP_DATA.maps[rule] || [];
+  const current = maps.find((item) => item.label === state.mapStage) || maps.find((item) => item.label === "リュウグウターミナル") || maps[0] || null;
+  const stage = current ? current.label : "";
+  const rangeMode = state.mapRangeMode === "without" ? "without" : "with";
+  const imagePath = current && (current.images[rangeMode] || current.images.with || current.images.without);
+  const favoriteKey = `${rule}|${stage}`;
+  const favoriteSet = new Set(state.favoriteMaps || []);
+
+  const page = createElement("section", "map-page", { "aria-label": "スプラトゥーン3 マップ" });
+  const controls = createElement("div", "map-bar");
+  const ruleSelect = createElement("select", "map-rule-select", { "aria-label": "ルール名を選択" });
+  for (const item of MAP_DATA.rules) {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = item.label;
+    option.selected = item.id === rule;
+    ruleSelect.append(option);
+  }
+  ruleSelect.addEventListener("change", (event) => actions.selectMapRule(event.target.value));
+
+  const stageSelect = createElement("select", "map-stage-select", { "aria-label": "マップ名を選択" });
+  const favorites = (state.favoriteMaps || [])
+    .map((key) => key.split("|"))
+    .filter(([favRule, favStage]) => favRule === rule && maps.some((item) => item.label === favStage))
+    .map(([, favStage]) => favStage);
+  if (favorites.length) {
+    const group = document.createElement("optgroup");
+    group.label = "★ お気に入り";
+    for (const name of favorites) group.append(createMapOption(name, stage, true));
+    stageSelect.append(group);
+  }
+  const normalGroup = document.createElement("optgroup");
+  normalGroup.label = "マップ";
+  for (const item of maps) {
+    if (!favorites.includes(item.label)) normalGroup.append(createMapOption(item.label, stage, false));
+  }
+  if (normalGroup.children.length) stageSelect.append(normalGroup);
+  stageSelect.addEventListener("change", (event) => actions.selectMapStage(event.target.value));
+
+  const star = createElement("button", `favorite-weapon-toggle ${favoriteSet.has(favoriteKey) ? "is-active" : ""}`.trim(), {
+    type: "button",
+    text: favoriteSet.has(favoriteKey) ? "★" : "☆",
+    title: favoriteSet.has(favoriteKey) ? "お気に入りをはずす" : "お気に入りにする",
+    "aria-label": favoriteSet.has(favoriteKey) ? "お気に入りをはずす" : "お気に入りにする",
+  });
+  star.addEventListener("click", () => actions.toggleFavoriteMap(rule, stage));
+  controls.append(ruleSelect, stageSelect, star);
+
+  const rangeSwitch = createElement("div", "map-range-switch", { role: "group", "aria-label": "ブキ射程表の表示" });
+  for (const [mode, label] of [["with", "射程表あり"], ["without", "射程表なし"]]) {
+    const button = createElement("button", `map-range-button ${rangeMode === mode ? "is-active" : ""}`.trim(), {
+      type: "button",
+      text: label,
+      "aria-pressed": String(rangeMode === mode),
+    });
+    button.addEventListener("click", () => actions.setMapRangeMode(mode));
+    rangeSwitch.append(button);
+  }
+
+  const viewer = createElement("div", "map-viewer");
+  if (imagePath) {
+    const image = createElement("img", "map-image", {
+      src: encodeURI(imagePath),
+      alt: `${ruleLabel(rule)} ${stage} ${rangeMode === "with" ? "ブキ射程表あり" : "ブキ射程表なし"}`,
+      loading: "eager",
+    });
+    viewer.append(image);
+  } else {
+    viewer.append(createElement("div", "map-empty", { text: "この条件のマップ画像がありません" }));
+  }
+
+  page.append(controls, rangeSwitch, viewer);
+  return page;
+}
+
+function createMapOption(name, selectedName, favorite) {
+  const option = document.createElement("option");
+  option.value = name;
+  option.textContent = favorite ? `★ ${name}` : name;
+  option.selected = name === selectedName;
+  return option;
+}
+
+function normalizeMapRule(rule) {
+  return MAP_DATA.rules.some((item) => item.id === rule) ? rule : "tower";
+}
+
+function ruleLabel(rule) {
+  const item = MAP_DATA.rules.find((entry) => entry.id === rule);
+  return item ? item.label : "ヤグラ";
 }
 
 function createWeaponCategorySelect(state, actions) {

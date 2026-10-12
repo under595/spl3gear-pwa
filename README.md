@@ -9,6 +9,7 @@ Static files for GitHub Pages.
 - service-worker.js
 - SRC/
 - asset/
+- asset_map/
 
 ## GitHub Pages
 

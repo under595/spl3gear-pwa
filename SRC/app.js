@@ -16,6 +16,7 @@
   restoreState(state);
 
   const actions = {
+    setActiveTab(tab) { state.activeTab = tab === "map" ? "map" : "gear"; redraw(); },
     selectWeapon(name) { state.weaponName = name; state.pendingWeaponName = null; redraw(); },
     selectWeaponCategory(category) { state.weaponCategory = category || "all"; redraw(); },
     setPendingWeaponChoice(name) { state.pendingWeaponName = WEAPON_DATAS[name] ? name : null; redraw(); },
@@ -37,6 +38,10 @@
     removeSlot(slot) { removeSlotPower(state, slot); redraw(); },
     toggleSlotDisabled(slot) { toggleSlotDisabled(state, slot); redraw(); },
     togglePool() { state.poolVisible = !state.poolVisible; redraw(); },
+    selectMapRule(rule) { state.mapRule = rule || "tower"; redraw(); },
+    selectMapStage(stage) { state.mapStage = stage || ""; redraw(); },
+    setMapRangeMode(mode) { state.mapRangeMode = mode === "without" ? "without" : "with"; redraw(); },
+    toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
 
     pointerStart(event, source, powerName) {
@@ -180,6 +185,7 @@
     try {
       const saved = readSavedState();
       if (!saved || typeof saved !== "object") return;
+      if (saved.activeTab === "gear" || saved.activeTab === "map") current.activeTab = saved.activeTab;
       if (WEAPON_DATAS[saved.weaponName]) current.weaponName = saved.weaponName;
       if (typeof saved.weaponCategory === "string") current.weaponCategory = saved.weaponCategory;
       if (Array.isArray(saved.favoriteWeapons)) {
@@ -201,6 +207,10 @@
         current.visibleGroups = normalizeVisibleGroups(saved.visibleGroups);
       }
       if (Number.isFinite(Number(saved.mainShotCount))) current.mainShotCount = Math.max(1, Math.min(10, Number(saved.mainShotCount)));
+      if (typeof saved.mapRule === "string") current.mapRule = saved.mapRule;
+      if (typeof saved.mapStage === "string") current.mapStage = saved.mapStage;
+      if (saved.mapRangeMode === "with" || saved.mapRangeMode === "without") current.mapRangeMode = saved.mapRangeMode;
+      if (Array.isArray(saved.favoriteMaps)) current.favoriteMaps = saved.favoriteMaps.filter((item) => typeof item === "string");
     } catch (error) {
       console.warn("Failed to restore simulator state", error);
     }
@@ -209,6 +219,7 @@
   function statePayload(current) {
     return {
       savedAt: Date.now(),
+      activeTab: current.activeTab,
       weaponName: current.weaponName,
       weaponCategory: current.weaponCategory,
       favoriteWeapons: current.favoriteWeapons,
@@ -228,6 +239,10 @@
       optionsOpen: current.optionsOpen,
       visibleGroups: normalizeVisibleGroups(current.visibleGroups),
       mainShotCount: current.mainShotCount,
+      mapRule: current.mapRule,
+      mapStage: current.mapStage,
+      mapRangeMode: current.mapRangeMode,
+      favoriteMaps: current.favoriteMaps,
     };
   }
 
@@ -318,6 +333,15 @@
     if (favorites.has(weaponName)) favorites.delete(weaponName);
     else favorites.add(weaponName);
     current.favoriteWeapons = [...favorites].filter((name) => WEAPON_DATAS[name]);
+  }
+
+  function toggleFavoriteMap(current, rule, stage) {
+    if (!rule || !stage) return;
+    const key = `${rule}|${stage}`;
+    const favorites = new Set(current.favoriteMaps || []);
+    if (favorites.has(key)) favorites.delete(key);
+    else favorites.add(key);
+    current.favoriteMaps = [...favorites];
   }
 
   async function refreshApp() {

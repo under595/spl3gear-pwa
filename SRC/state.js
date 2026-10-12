@@ -36,6 +36,7 @@
     const gearSets = createInitialGearSets();
     return {
       weaponName: defaultWeaponName,
+      activeTab: "gear",
       weaponCategory: "all",
       pendingWeaponName: null,
       favoriteWeapons: [],
@@ -62,6 +63,10 @@
         analyzer: true,
       },
       mainShotCount: 5,
+      mapRule: "tower",
+      mapStage: "リュウグウターミナル",
+      mapRangeMode: "with",
+      favoriteMaps: [],
     };
   }
 
