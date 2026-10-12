@@ -26,6 +26,8 @@
     toggleWeaponDetails() { state.weaponDetailsOpen = !state.weaponDetailsOpen; redraw(); },
     toggleRangeComparison() { state.rangeComparisonOpen = !state.rangeComparisonOpen; redraw(); },
     toggleEfficiencyTest() { state.efficiencyTestOpen = !state.efficiencyTestOpen; redraw(); },
+    toggleOptions() { state.optionsOpen = !state.optionsOpen; redraw(); },
+    setGroupVisible(group, value) { setGroupVisible(state, group, value); redraw(); },
     setMainShotCount(value) { state.mainShotCount = Math.max(1, Math.min(10, Number(value) || 5)); redraw(); },
     selectGearSet(index) { activateGearSet(state, index); redraw(); },
     addPower(powerName) { addPowerToFirstAvailable(state, powerName); redraw(); },
@@ -190,6 +192,10 @@
       if (typeof saved.weaponDetailsOpen === "boolean") current.weaponDetailsOpen = saved.weaponDetailsOpen;
       if (typeof saved.rangeComparisonOpen === "boolean") current.rangeComparisonOpen = saved.rangeComparisonOpen;
       if (typeof saved.efficiencyTestOpen === "boolean") current.efficiencyTestOpen = saved.efficiencyTestOpen;
+      if (typeof saved.optionsOpen === "boolean") current.optionsOpen = saved.optionsOpen;
+      if (saved.visibleGroups && typeof saved.visibleGroups === "object") {
+        current.visibleGroups = normalizeVisibleGroups(saved.visibleGroups);
+      }
       if (Number.isFinite(Number(saved.mainShotCount))) current.mainShotCount = Math.max(1, Math.min(10, Number(saved.mainShotCount)));
     } catch (error) {
       console.warn("Failed to restore simulator state", error);
@@ -213,8 +219,27 @@
       weaponDetailsOpen: current.weaponDetailsOpen,
       rangeComparisonOpen: current.rangeComparisonOpen,
       efficiencyTestOpen: current.efficiencyTestOpen,
+      optionsOpen: current.optionsOpen,
+      visibleGroups: normalizeVisibleGroups(current.visibleGroups),
       mainShotCount: current.mainShotCount,
     };
+  }
+
+  function normalizeVisibleGroups(groups) {
+    return {
+      weaponDetails: groups.weaponDetails !== false,
+      rangeComparison: groups.rangeComparison !== false,
+      efficiency: groups.efficiency !== false,
+      gearSet: groups.gearSet !== false,
+      analyzer: groups.analyzer !== false,
+    };
+  }
+
+  function setGroupVisible(current, group, value) {
+    current.visibleGroups = normalizeVisibleGroups(current.visibleGroups || {});
+    if (Object.prototype.hasOwnProperty.call(current.visibleGroups, group)) {
+      current.visibleGroups[group] = Boolean(value);
+    }
   }
 
   function readSavedState() {

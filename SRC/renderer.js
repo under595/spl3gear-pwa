@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.15";
+  const APP_VERSION = "Ver1.16";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -15,18 +15,64 @@ function render(root, state, actions) {
     disabledSlots: state.disabledSlots,
   });
   root.replaceChildren();
-  root.append(
-    renderWeaponBar(state, actions),
-    renderPinnedResults(results, state, actions),
-    renderRangeComparison(state, actions),
-    renderEfficiencyTest(state, actions),
-    renderGearSetTabs(state, actions),
-    renderGearInput(state, actions),
-    renderPowerPool(state, actions),
-    renderAnalyzerControls(state, actions),
-    renderResults(results),
-    renderAppVersion(actions)
-  );
+  const visible = normalizedVisibleGroups(state.visibleGroups);
+  const children = [renderWeaponBar(state, actions)];
+  if (visible.weaponDetails) children.push(renderPinnedResults(results, state, actions));
+  if (visible.rangeComparison) children.push(renderRangeComparison(state, actions));
+  if (visible.efficiency) children.push(renderEfficiencyTest(state, actions));
+  if (visible.gearSet) children.push(renderGearSetTabs(state, actions), renderGearInput(state, actions), renderPowerPool(state, actions));
+  if (visible.analyzer) children.push(renderAnalyzerControls(state, actions));
+  children.push(renderResults(results), renderOptionsGroup(state, actions), renderAppVersion(actions));
+  root.append(...children);
+}
+
+function normalizedVisibleGroups(groups) {
+  return {
+    weaponDetails: !groups || groups.weaponDetails !== false,
+    rangeComparison: !groups || groups.rangeComparison !== false,
+    efficiency: !groups || groups.efficiency !== false,
+    gearSet: !groups || groups.gearSet !== false,
+    analyzer: !groups || groups.analyzer !== false,
+  };
+}
+
+function renderOptionsGroup(state, actions) {
+  const isOpen = state.optionsOpen !== false;
+  const visible = normalizedVisibleGroups(state.visibleGroups);
+  const section = createElement("section", `options-group ${isOpen ? "" : "is-collapsed"}`.trim(), { "aria-label": "オプション" });
+  const header = createElement("div", "options-header");
+  header.append(createElement("strong", "", { text: "オプション" }));
+  const hiddenCount = Object.values(visible).filter((value) => !value).length;
+  header.append(createElement("span", "options-summary", { text: hiddenCount ? `${hiddenCount}項目非表示` : "全表示" }));
+  const toggle = createElement("button", "detail-toggle", {
+    type: "button",
+    text: isOpen ? "閉じる" : "開く",
+    title: isOpen ? "オプションを閉じる" : "オプションを開く",
+    "aria-expanded": String(isOpen),
+  });
+  toggle.addEventListener("click", actions.toggleOptions);
+  header.append(toggle);
+  section.append(header);
+  if (!isOpen) return section;
+
+  const body = createElement("div", "options-body");
+  const items = [
+    ["weaponDetails", "ブキ詳細"],
+    ["rangeComparison", "射程対比"],
+    ["efficiency", "効率"],
+    ["gearSet", "ギアセット"],
+    ["analyzer", "解析条件"],
+  ];
+  for (const [key, label] of items) {
+    const item = createElement("label", "option-check");
+    const checkbox = createElement("input", "", { type: "checkbox", title: `${label}を表示` });
+    checkbox.checked = visible[key];
+    checkbox.addEventListener("change", (event) => actions.setGroupVisible(key, event.target.checked));
+    item.append(checkbox, createElement("span", "", { text: label }));
+    body.append(item);
+  }
+  section.append(body);
+  return section;
 }
 
 function renderGearSetTabs(state, actions) {

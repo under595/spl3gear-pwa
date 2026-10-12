@@ -51,6 +51,14 @@
       weaponDetailsOpen: true,
       rangeComparisonOpen: true,
       efficiencyTestOpen: true,
+      optionsOpen: true,
+      visibleGroups: {
+        weaponDetails: true,
+        rangeComparison: true,
+        efficiency: true,
+        gearSet: true,
+        analyzer: true,
+      },
       mainShotCount: 5,
     };
   }
