@@ -26,7 +26,8 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const APP_VERSION = "Ver1.39";
+  const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
+  const APP_VERSION = "Ver1.40";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -641,9 +642,9 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
     const angularDelta = Math.abs(normalizeAngleDelta(currentAngle - startAngle)) * Math.PI / 180 * startDistance;
     if (!mode && Math.max(radialDelta, angularDelta) >= 2) mode = radialDelta >= angularDelta ? "range" : "angle";
     if (mode === "range") {
-      range = Math.max(6, Math.min(80, currentDistance));
+      range = Math.max(6, Math.min(80, baseRange + ((currentDistance - startDistance) * GUN_MARKER_DRAG_SENSITIVITY)));
     } else if (mode === "angle") {
-      angle = baseAngle + normalizeAngleDelta(currentAngle - startAngle);
+      angle = baseAngle + (normalizeAngleDelta(currentAngle - startAngle) * GUN_MARKER_DRAG_SENSITIVITY);
     } else {
       return;
     }
