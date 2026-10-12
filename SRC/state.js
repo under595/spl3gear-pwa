@@ -66,10 +66,11 @@
       mapRule: "tower",
       mapImageType: "white",
       mapSlots: [
-        { stage: "リュウグウターミナル", variant: "", waterVisible: true },
-        { stage: "リュウグウターミナル", variant: "", waterVisible: true },
+        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "📍" },
+        { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "📍" },
       ],
       favoriteMaps: [],
+      mapMarkers: {},
     };
   }
 

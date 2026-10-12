@@ -43,6 +43,9 @@
     selectMapStage(slotIndex, stage) { updateMapSlot(state, slotIndex, { stage: stage || "", variant: "", waterVisible: true }); redraw(); },
     selectMapVariant(slotIndex, variant) { updateMapSlot(state, slotIndex, { variant: variant || "" }); redraw(); },
     setMapWaterVisible(slotIndex, value) { updateMapSlot(state, slotIndex, { waterVisible: Boolean(value) }); redraw(); },
+    selectMapMarker(slotIndex, marker) { updateMapSlot(state, slotIndex, { marker: normalizeMarker(marker) }); redraw(); },
+    placeMapMarker(key, marker, x, y) { placeMapMarker(state, key, marker, x, y); redraw(); },
+    removeMapMarker(key, id) { removeMapMarker(state, key, id); redraw(); },
     toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
 
@@ -212,6 +215,7 @@
       if (typeof saved.mapRule === "string") current.mapRule = saved.mapRule;
       current.mapSlots = normalizeMapSlots(saved);
       if (Array.isArray(saved.favoriteMaps)) current.favoriteMaps = saved.favoriteMaps.filter((item) => typeof item === "string");
+      current.mapMarkers = normalizeMapMarkers(saved.mapMarkers);
     } catch (error) {
       console.warn("Failed to restore simulator state", error);
     }
@@ -244,11 +248,12 @@
       mapImageType: current.mapImageType === "photo" ? "photo" : "white",
       mapSlots: normalizeMapSlots(current),
       favoriteMaps: current.favoriteMaps,
+      mapMarkers: normalizeMapMarkers(current.mapMarkers),
     };
   }
 
   function normalizeMapSlots(source) {
-    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true };
+    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "📍" };
     const sourceSlots = Array.isArray(source.mapSlots) ? source.mapSlots : [
       { stage: source.mapStage, variant: "" },
     ];
@@ -256,6 +261,7 @@
       stage: typeof slot?.stage === "string" && slot.stage ? slot.stage : fallback.stage,
       variant: typeof slot?.variant === "string" ? slot.variant : "",
       waterVisible: typeof slot?.waterVisible === "boolean" ? slot.waterVisible : true,
+      marker: normalizeMarker(slot?.marker),
     }));
     while (slots.length < 2) slots.push({ ...fallback });
     return slots;
@@ -265,6 +271,51 @@
     current.mapSlots = normalizeMapSlots(current);
     const index = Math.max(0, Math.min(1, Math.floor(Number(slotIndex) || 0)));
     current.mapSlots[index] = { ...current.mapSlots[index], ...changes };
+  }
+
+  function normalizeMarker(marker) {
+    const allowed = new Set(["📍", "🔴", "🟡", "🟢", "🔵", "⭐", "🔫", "⚠️"]);
+    return allowed.has(marker) ? marker : "📍";
+  }
+
+  function normalizeMapMarkers(markers) {
+    const normalized = {};
+    if (!markers || typeof markers !== "object") return normalized;
+    for (const [key, list] of Object.entries(markers)) {
+      if (typeof key !== "string" || !Array.isArray(list)) continue;
+      normalized[key] = list
+        .filter((item) => item && typeof item === "object")
+        .slice(0, 32)
+        .map((item) => ({
+          id: typeof item.id === "string" ? item.id : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          marker: normalizeMarker(item.marker),
+          x: Math.max(0, Math.min(100, Number(item.x) || 0)),
+          y: Math.max(0, Math.min(100, Number(item.y) || 0)),
+        }));
+    }
+    return normalized;
+  }
+
+  function placeMapMarker(current, key, marker, x, y) {
+    if (typeof key !== "string" || !key) return;
+    current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
+    const list = current.mapMarkers[key] || [];
+    if (list.length >= 32) return;
+    current.mapMarkers[key] = [
+      ...list,
+      {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        marker: normalizeMarker(marker),
+        x: Math.max(0, Math.min(100, Number(x) || 0)),
+        y: Math.max(0, Math.min(100, Number(y) || 0)),
+      },
+    ];
+  }
+
+  function removeMapMarker(current, key, id) {
+    if (typeof key !== "string" || typeof id !== "string") return;
+    current.mapMarkers = normalizeMapMarkers(current.mapMarkers);
+    current.mapMarkers[key] = (current.mapMarkers[key] || []).filter((item) => item.id !== id);
   }
 
   function normalizeVisibleGroups(groups) {

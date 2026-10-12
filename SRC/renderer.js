@@ -6,7 +6,9 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.30";
+  const MAP_MARKERS = ["📍", "🔴", "🟡", "🟢", "🔵", "⭐", "🔫", "⚠️"];
+  const MAP_MARKER_LIMIT = 32;
+  const APP_VERSION = "Ver1.31";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -372,6 +374,9 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
   const photoPath = getPhotoMapImagePath(stage, rule);
   const imagePath = imageType === "photo" ? photoPath : (current && current.images.with);
   const favoriteKey = `${rule}|${stage}`;
+  const markerKey = getMapMarkerKey(rule, stage);
+  const selectedMarker = normalizeMapMarker(slot.marker);
+  const markers = Array.isArray(state.mapMarkers?.[markerKey]) ? state.mapMarkers[markerKey].slice(0, MAP_MARKER_LIMIT) : [];
   const favoriteSet = new Set(state.favoriteMaps || []);
 
   const section = createElement("article", "map-set");
@@ -417,19 +422,70 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
 
   const viewer = createElement("div", "map-viewer");
   if (imagePath) {
+    const canvas = createElement("div", "map-canvas", { "data-marker-key": markerKey });
+    if (imageType === "white") {
+      canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        actions.placeMapMarker(
+          markerKey,
+          selectedMarker,
+          ((event.clientX - rect.left) / rect.width) * 100,
+          ((event.clientY - rect.top) / rect.height) * 100
+        );
+      });
+    }
     const image = createElement("img", "map-image", {
       src: encodeURI(imagePath),
       alt: `${ruleLabel(rule)} ${stage}${variant && imageType === "white" ? ` ${variant}` : ""} ${imageType === "photo" ? "写真画像" : "白画像"}`,
       loading: "eager",
     });
-    viewer.append(image);
+    canvas.append(image);
+    if (imageType === "white") {
+      for (const marker of markers) canvas.append(renderMapMarker(markerKey, marker, actions));
+    }
+    viewer.append(canvas);
   } else {
     viewer.append(createElement("div", "map-empty", { text: "この条件のマップ画像がありません" }));
   }
 
-  section.append(controls, viewer);
+  section.append(controls);
+  if (imageType === "white") section.append(renderMapMarkerPalette(slotIndex, selectedMarker, markers.length, actions));
+  section.append(viewer);
   if (group && imageType === "white") section.append(renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions));
   return section;
+}
+
+function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions) {
+  const wrap = createElement("div", "map-marker-palette", { role: "group", "aria-label": `マーカーパレット ${slotIndex + 1}` });
+  for (const marker of MAP_MARKERS) {
+    const button = createElement("button", `map-marker-button ${selectedMarker === marker ? "is-active" : ""}`.trim(), {
+      type: "button",
+      text: marker,
+      title: `${marker} を選択`,
+      "aria-pressed": String(selectedMarker === marker),
+    });
+    button.addEventListener("click", () => actions.selectMapMarker(slotIndex, marker));
+    wrap.append(button);
+  }
+  wrap.append(createElement("span", "map-marker-count", { text: `${markerCount}/${MAP_MARKER_LIMIT}` }));
+  return wrap;
+}
+
+function renderMapMarker(markerKey, marker, actions) {
+  const button = createElement("button", "map-marker", {
+    type: "button",
+    text: normalizeMapMarker(marker.marker),
+    title: "クリックで削除",
+    "aria-label": "マーカーを削除",
+  });
+  button.style.left = `${Math.max(0, Math.min(100, Number(marker.x) || 0))}%`;
+  button.style.top = `${Math.max(0, Math.min(100, Number(marker.y) || 0))}%`;
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    actions.removeMapMarker(markerKey, marker.id);
+  });
+  return button;
 }
 
 function renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions) {
@@ -472,6 +528,14 @@ function formatMapStageNumber(index) {
 
 function getPhotoMapImagePath(stage, rule) {
   return window.SPL3_GAME8_MAP_DATA?.[stage]?.[rule] || "";
+}
+
+function getMapMarkerKey(rule, stage) {
+  return `${rule}|${stage}`;
+}
+
+function normalizeMapMarker(marker) {
+  return MAP_MARKERS.includes(marker) ? marker : "📍";
 }
 
 function groupMapVariants(rule) {
