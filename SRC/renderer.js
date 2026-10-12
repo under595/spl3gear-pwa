@@ -7,17 +7,17 @@
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
   const MAP_MARKERS = [
-    { id: "pin", symbol: "📍" },
-    { id: "red", symbol: "🔴" },
-    { id: "yellow", symbol: "🟡" },
-    { id: "green", symbol: "🟢" },
-    { id: "blue", symbol: "🔵" },
-    { id: "star", symbol: "⭐" },
-    { id: "gun", symbol: "🔫" },
-    { id: "warning", symbol: "⚠️" },
+    { id: "pin", symbol: "📍", label: "ピン" },
+    { id: "red", symbol: "🔴", label: "赤" },
+    { id: "yellow", symbol: "🟡", label: "黄" },
+    { id: "green", symbol: "🟢", label: "緑" },
+    { id: "blue", symbol: "🔵", label: "青" },
+    { id: "star", symbol: "⭐", label: "注目" },
+    { id: "gun", symbol: "🔫", label: "射線" },
+    { id: "warning", symbol: "⚠️", label: "注意" },
   ];
   const MAP_MARKER_LIMIT = 32;
-  const APP_VERSION = "Ver1.32";
+  const APP_VERSION = "Ver1.33";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -467,16 +467,16 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
 
 function renderMapMarkerPalette(slotIndex, selectedMarker, markerCount, actions) {
   const wrap = createElement("div", "map-marker-palette", { role: "group", "aria-label": `マーカーパレット ${slotIndex + 1}` });
+  const select = createElement("select", "map-marker-select", { "aria-label": `マーカーを選択 ${slotIndex + 1}` });
   for (const marker of MAP_MARKERS) {
-    const button = createElement("button", `map-marker-button ${selectedMarker === marker.id ? "is-active" : ""}`.trim(), {
-      type: "button",
-      text: marker.symbol,
-      title: `${marker.symbol} を選択`,
-      "aria-pressed": String(selectedMarker === marker.id),
-    });
-    button.addEventListener("click", () => actions.selectMapMarker(slotIndex, marker.id));
-    wrap.append(button);
+    const option = document.createElement("option");
+    option.value = marker.id;
+    option.textContent = `${marker.symbol} ${marker.label}`;
+    option.selected = selectedMarker === marker.id;
+    select.append(option);
   }
+  select.addEventListener("change", (event) => actions.selectMapMarker(slotIndex, event.target.value));
+  wrap.append(select, createElement("span", "map-marker-current", { text: getMapMarkerSymbol(selectedMarker) }));
   wrap.append(createElement("span", "map-marker-count", { text: `${markerCount}/${MAP_MARKER_LIMIT}` }));
   return wrap;
 }
@@ -729,6 +729,7 @@ function normalizeMapSlotState(slot = {}) {
     stage: typeof slot.stage === "string" && slot.stage ? slot.stage : "リュウグウターミナル",
     variant: typeof slot.variant === "string" ? slot.variant : "",
     waterVisible: typeof slot.waterVisible === "boolean" ? slot.waterVisible : true,
+    marker: normalizeMapMarkerId(slot.marker),
   };
 }
 

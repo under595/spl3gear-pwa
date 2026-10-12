@@ -254,7 +254,7 @@
   }
 
   function normalizeMapSlots(source) {
-    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "📍" };
+    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true, marker: "pin" };
     const sourceSlots = Array.isArray(source.mapSlots) ? source.mapSlots : [
       { stage: source.mapStage, variant: "" },
     ];
