@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.26";
+  const APP_VERSION = "Ver1.27";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -447,7 +447,8 @@ function renderVariantChoices(group, selectedState, waterVisible, slotIndex, act
   waterInput.disabled = !water.hasWater || !water.hasWaterless;
   waterInput.addEventListener("change", () => actions.setMapWaterVisible(slotIndex, waterInput.checked));
   waterLabel.append(waterInput, createElement("span", "", { text: "水表示" }));
-  wrap.append(list, waterLabel);
+  list.append(waterLabel);
+  wrap.append(list);
   return wrap;
 }
 
