@@ -17,6 +17,7 @@
 
   const actions = {
     selectWeapon(name) { state.weaponName = name; state.pendingWeaponName = null; redraw(); },
+    selectWeaponCategory(category) { state.weaponCategory = category || "all"; redraw(); },
     setPendingWeaponChoice(name) { state.pendingWeaponName = WEAPON_DATAS[name] ? name : null; redraw(); },
     toggleFavoriteWeapon(name) { toggleFavoriteWeapon(state, name || state.weaponName); state.pendingWeaponName = null; redraw(); },
     setLdeIntensity(value) { state.ldeIntensity = Number(value); redraw(); },
@@ -180,6 +181,7 @@
       const saved = readSavedState();
       if (!saved || typeof saved !== "object") return;
       if (WEAPON_DATAS[saved.weaponName]) current.weaponName = saved.weaponName;
+      if (typeof saved.weaponCategory === "string") current.weaponCategory = saved.weaponCategory;
       if (Array.isArray(saved.favoriteWeapons)) {
         current.favoriteWeapons = saved.favoriteWeapons.filter((name) => WEAPON_DATAS[name]);
       }
@@ -208,6 +210,7 @@
     return {
       savedAt: Date.now(),
       weaponName: current.weaponName,
+      weaponCategory: current.weaponCategory,
       favoriteWeapons: current.favoriteWeapons,
       gearSetIndex: current.gearSetIndex,
       gearSets: current.gearSets,

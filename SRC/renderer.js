@@ -5,7 +5,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.17";
+  const APP_VERSION = "Ver1.18";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -268,23 +268,33 @@ function renderWeaponBar(state, actions) {
     iconImage(SPECIAL_DATAS[weapon?.sp]?.i, weapon?.sp, "weapon-icon")
   );
 
+  const categorySelect = createWeaponCategorySelect(state, actions);
   const select = createElement("select", "weapon-select", { "aria-label": "ブキを選択" });
   const favorites = (state.favoriteWeapons || []).filter((name) => WEAPON_DATAS[name]);
   const favoriteSet = new Set(favorites);
-  if (favorites.length) {
+  const currentCategory = normalizeWeaponCategory(state.weaponCategory);
+  const filteredFavorites = currentCategory === "fav" || currentCategory === "all" ? favorites : [];
+  if (filteredFavorites.length) {
     const favoriteGroup = document.createElement("optgroup");
     favoriteGroup.label = "★ お気に入り";
-    for (const name of favorites) favoriteGroup.append(createWeaponOption(name, state.weaponName, true));
+    for (const name of filteredFavorites) favoriteGroup.append(createWeaponOption(name, state.weaponName, true));
     select.append(favoriteGroup);
   }
   const groups = groupWeapons();
   for (const [category, names] of Object.entries(groups)) {
+    if (currentCategory !== "all" && currentCategory !== category) continue;
     const optgroup = document.createElement("optgroup");
     optgroup.label = category;
     for (const name of names) {
       if (!favoriteSet.has(name)) optgroup.append(createWeaponOption(name, state.weaponName, false));
     }
     if (optgroup.children.length) select.append(optgroup);
+  }
+  if (!Array.from(select.options).some((option) => option.value === state.weaponName)) {
+    const currentGroup = document.createElement("optgroup");
+    currentGroup.label = "選択中";
+    currentGroup.append(createWeaponOption(state.weaponName, state.weaponName, favoriteSet.has(state.weaponName)));
+    select.prepend(currentGroup);
   }
   select.addEventListener("change", (event) => actions.selectWeapon(event.target.value));
   const selectArea = createElement("div", "weapon-select-area");
@@ -295,9 +305,56 @@ function renderWeaponBar(state, actions) {
     "aria-label": favoriteSet.has(state.weaponName) ? "お気に入りをはずす" : "お気に入りにする",
   });
   star.addEventListener("click", () => actions.toggleFavoriteWeapon(state.weaponName));
-  selectArea.append(select, star);
+  selectArea.append(categorySelect, select, star);
   wrap.append(icons, selectArea);
   return wrap;
+}
+
+function createWeaponCategorySelect(state, actions) {
+  const select = createElement("select", "weapon-category-select", {
+    "aria-label": "ブキ種を選択",
+    title: weaponCategoryTitle(state.weaponCategory),
+  });
+  for (const item of weaponCategoryOptions()) {
+    const option = document.createElement("option");
+    option.value = item.value;
+    option.textContent = `${item.code} ${item.label}`;
+    option.selected = item.value === normalizeWeaponCategory(state.weaponCategory);
+    option.title = item.label;
+    select.append(option);
+  }
+  select.addEventListener("change", (event) => actions.selectWeaponCategory(event.target.value));
+  return select;
+}
+
+function weaponCategoryOptions() {
+  const existing = new Set(Object.values(WEAPON_DATAS).map((data) => data.cat || "その他"));
+  return [
+    { value: "all", code: "All", label: "すべて" },
+    { value: "fav", code: "Fav", label: "お気に入り" },
+    { value: "シューター", code: "Sho", label: "シューター" },
+    { value: "ローラー", code: "Rol", label: "ローラー" },
+    { value: "チャージャー", code: "Cha", label: "チャージャー" },
+    { value: "スロッシャー", code: "Slo", label: "スロッシャー" },
+    { value: "スピナー", code: "Spi", label: "スピナー" },
+    { value: "マニューバー", code: "Man", label: "マニューバー" },
+    { value: "ブラスター", code: "Bla", label: "ブラスター" },
+    { value: "シェルター", code: "She", label: "シェルター" },
+    { value: "フデ", code: "Bru", label: "フデ" },
+    { value: "ストリンガー", code: "Str", label: "ストリンガー" },
+    { value: "ワイパー", code: "Wip", label: "ワイパー" },
+    { value: "その他", code: "Oth", label: "その他" },
+  ].filter((item) => item.value === "all" || item.value === "fav" || existing.has(item.value));
+}
+
+function normalizeWeaponCategory(category) {
+  const values = new Set(weaponCategoryOptions().map((item) => item.value));
+  return values.has(category) ? category : "all";
+}
+
+function weaponCategoryTitle(category) {
+  const item = weaponCategoryOptions().find((entry) => entry.value === normalizeWeaponCategory(category));
+  return item ? `${item.code}: ${item.label}` : "All: すべて";
 }
 
 function createWeaponOption(name, selectedName, favorite) {

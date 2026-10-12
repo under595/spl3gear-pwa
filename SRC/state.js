@@ -36,6 +36,7 @@
     const gearSets = createInitialGearSets();
     return {
       weaponName: defaultWeaponName,
+      weaponCategory: "all",
       pendingWeaponName: null,
       favoriteWeapons: [],
       gearSetIndex: 0,

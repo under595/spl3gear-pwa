@@ -56,7 +56,7 @@ button { cursor: pointer; }
 
 .weapon-select-area {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 36px;
+  grid-template-columns: 62px minmax(0, 1fr) 36px;
   gap: 6px;
   align-items: center;
   min-width: 0;
@@ -102,6 +102,7 @@ button { cursor: pointer; }
 
 .weapon-icon.bg-light { background: #ececec; }
 
+.weapon-category-select,
 .weapon-select {
   min-width: 0;
   height: 34px;
@@ -111,8 +112,14 @@ button { cursor: pointer; }
   background: linear-gradient(#666, #4e4e4e);
 }
 
+.weapon-category-select {
+  padding-inline: 5px 2px;
+  font-weight: 800;
+}
+
 .weapon-select option,
-.weapon-select optgroup {
+.weapon-select optgroup,
+.weapon-category-select option {
   color: #000;
   background: #fff;
 }
@@ -1006,8 +1013,10 @@ button { cursor: pointer; }
   .weapon-bar { gap: 6px; padding: 5px; }
   .weapon-icons { grid-template-columns: repeat(3, 30px); gap: 4px; }
   .weapon-icon { width: 30px; height: 30px; }
-  .weapon-select-area { grid-template-columns: minmax(0, 1fr) 38px; }
+  .weapon-select-area { grid-template-columns: 56px minmax(0, 1fr) 38px; gap: 4px; }
+  .weapon-category-select { padding-inline: 4px 0; }
   .weapon-select,
+  .weapon-category-select,
   .favorite-weapon-toggle { height: 38px; }
   .favorite-weapon-toggle { width: 38px; }
   .analyzer-body { grid-template-columns: 1fr; align-items: stretch; }
