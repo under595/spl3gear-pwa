@@ -27,7 +27,7 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.42";
+  const APP_VERSION = "Ver1.43";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -442,6 +442,9 @@ function renderMapSet(state, actions, rule, groups, slotIndex, imageType) {
   const viewer = createElement("div", "map-viewer");
   if (imagePath) {
     const canvas = createElement("div", "map-canvas", { "data-marker-key": markerKey });
+    canvas.addEventListener("contextmenu", (event) => {
+      if (event.target?.closest?.(".map-gun-sector, .map-marker")) event.preventDefault();
+    });
     if (imageType === "white") {
       canvas.addEventListener("click", (event) => {
         const rect = canvas.getBoundingClientRect();
@@ -630,7 +633,9 @@ function renderGunMarkerSector(markerKey, marker, actions) {
 }
 
 function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
+  event.preventDefault();
   const markerId = typeof marker.id === "string" ? marker.id : "";
+  const sensitivity = event.pointerType === "mouse" ? GUN_MARKER_DRAG_SENSITIVITY : 1;
   const startPoint = getMapCanvasPoint(canvas, event);
   if (!startPoint) return;
   const baseAngle = getGunAngle(marker);
@@ -646,6 +651,8 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   target.setPointerCapture?.(event.pointerId);
   const update = (moveEvent) => {
     if (moveEvent.pointerId !== event.pointerId) return;
+    moveEvent.preventDefault();
+    moveEvent.stopPropagation();
     const point = getMapCanvasPoint(canvas, moveEvent);
     if (!point) return;
     const currentVector = getGunSectorVector(canvas, point, centerX, centerY);
@@ -655,9 +662,9 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
     const angularDelta = Math.abs(normalizeAngleDelta(currentAngle - startAngle)) * Math.PI / 180 * startDistance;
     if (!mode && Math.max(radialDelta, angularDelta) >= 2) mode = radialDelta >= angularDelta ? "range" : "angle";
     if (mode === "range") {
-      range = Math.max(6, Math.min(80, baseRange + ((currentDistance - startDistance) * GUN_MARKER_DRAG_SENSITIVITY)));
+      range = Math.max(6, Math.min(80, baseRange + ((currentDistance - startDistance) * sensitivity)));
     } else if (mode === "angle") {
-      angle = baseAngle + (normalizeAngleDelta(currentAngle - startAngle) * GUN_MARKER_DRAG_SENSITIVITY);
+      angle = baseAngle + (normalizeAngleDelta(currentAngle - startAngle) * sensitivity);
     } else {
       return;
     }
@@ -666,6 +673,8 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   };
   const finish = (upEvent) => {
     if (upEvent.pointerId !== event.pointerId) return;
+    upEvent.preventDefault();
+    upEvent.stopPropagation();
     target.removeEventListener("pointermove", update);
     target.removeEventListener("pointerup", finish);
     target.removeEventListener("pointercancel", cancel);
@@ -675,6 +684,8 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
   };
   const cancel = (cancelEvent) => {
     if (cancelEvent.pointerId !== event.pointerId) return;
+    cancelEvent.preventDefault();
+    cancelEvent.stopPropagation();
     target.removeEventListener("pointermove", update);
     target.removeEventListener("pointerup", finish);
     target.removeEventListener("pointercancel", cancel);

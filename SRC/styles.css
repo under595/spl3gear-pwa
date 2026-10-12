@@ -278,6 +278,7 @@ button { cursor: pointer; }
   position: relative;
   width: 100%;
   cursor: crosshair;
+  -webkit-touch-callout: none;
 }
 
 .map-image {
@@ -327,6 +328,8 @@ button { cursor: pointer; }
   stroke-width: 8;
   pointer-events: all;
   touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
   cursor: ew-resize;
 }
 
