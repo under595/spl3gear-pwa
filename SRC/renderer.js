@@ -27,7 +27,7 @@
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
   const GUN_MARKER_DRAG_SENSITIVITY = 0.5;
-  const APP_VERSION = "Ver1.44";
+  const APP_VERSION = "Ver1.45";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -512,7 +512,7 @@ function renderMapMarker(markerKey, marker, actions) {
   const markerType = normalizeMapMarkerId(marker.marker);
   const button = createElement("button", "map-marker", {
     type: "button",
-    title: markerType === "gun" ? "左ドラッグで移動 / 右ドラッグで射線調整 / クリックで削除" : "ドラッグで移動 / クリックで削除",
+    title: markerType === "gun" ? "左ドラッグで移動 / クリックで削除" : "ドラッグで移動 / クリックで削除",
     "aria-label": "マーカーを移動または削除",
     "data-marker-id": markerId,
   });
@@ -525,10 +525,6 @@ function renderMapMarker(markerKey, marker, actions) {
     event.stopPropagation();
     const canvas = button.closest(".map-canvas");
     if (!canvas) return;
-    if (event.button === 2 && markerType === "gun") {
-      transformGunMarker(canvas, button, markerKey, marker, actions, event);
-      return;
-    }
     if (event.button !== undefined && event.button !== 0) return;
     button.setPointerCapture?.(event.pointerId);
     const startX = event.clientX;
@@ -698,7 +694,7 @@ function transformGunMarker(canvas, target, markerKey, marker, actions, event) {
 }
 
 function isGunSectorTransformPointer(event) {
-  if (event.pointerType === "mouse") return event.button === 2;
+  if (event.pointerType === "mouse") return event.button === 0;
   return event.button === undefined || event.button === 0;
 }
 
