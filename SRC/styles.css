@@ -318,7 +318,14 @@ button { cursor: pointer; }
   stroke: #ff3030;
   stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
-  pointer-events: stroke;
+  pointer-events: none;
+}
+
+.map-gun-sector-hit {
+  fill: rgba(255, 48, 48, 0.001);
+  stroke: transparent;
+  stroke-width: 8;
+  pointer-events: all;
   cursor: ew-resize;
 }
 

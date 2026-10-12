@@ -26,7 +26,7 @@
     "バイガイ亭": 22, "ネギトロ炭鉱": 25, "カジキ空港": 26, "リュウグウターミナル": 23, "デカライン高架下": 24,
   };
   const GUN_MARKER_SPREAD_DEGREES = 30;
-  const APP_VERSION = "Ver1.36";
+  const APP_VERSION = "Ver1.37";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -587,8 +587,8 @@ function renderMapMarker(markerKey, marker, actions) {
 }
 
 function updateGunSectorPath(canvas, markerId, marker) {
-  const path = canvas.querySelector(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-path`);
-  path?.setAttribute("d", buildGunSectorPath(marker));
+  const paths = canvas.querySelectorAll(`.map-gun-sector[data-marker-id="${CSS.escape(markerId)}"] .map-gun-sector-shape`);
+  for (const path of paths) path.setAttribute("d", buildGunSectorPath(marker));
 }
 
 function renderGunMarkerSector(markerKey, marker, actions) {
@@ -598,45 +598,48 @@ function renderGunMarkerSector(markerKey, marker, actions) {
   svg.setAttribute("viewBox", "0 0 100 100");
   svg.setAttribute("preserveAspectRatio", "none");
   svg.setAttribute("data-marker-id", markerId);
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("class", "map-gun-sector-path");
-  path.setAttribute("d", buildGunSectorPath(marker));
-  path.addEventListener("contextmenu", (event) => event.preventDefault());
-  path.addEventListener("pointerdown", (event) => {
+  const hitPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  hitPath.setAttribute("class", "map-gun-sector-shape map-gun-sector-hit");
+  hitPath.setAttribute("d", buildGunSectorPath(marker));
+  const linePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  linePath.setAttribute("class", "map-gun-sector-shape map-gun-sector-path");
+  linePath.setAttribute("d", buildGunSectorPath(marker));
+  hitPath.addEventListener("contextmenu", (event) => event.preventDefault());
+  hitPath.addEventListener("pointerdown", (event) => {
     if (event.button !== undefined && event.button !== 2) return;
     event.preventDefault();
     event.stopPropagation();
     const canvas = svg.closest(".map-canvas");
     if (!canvas) return;
-    path.setPointerCapture?.(event.pointerId);
+    hitPath.setPointerCapture?.(event.pointerId);
     let range = getGunRange(marker);
     const update = (moveEvent) => {
       if (moveEvent.pointerId !== event.pointerId) return;
       const point = getMapCanvasPoint(canvas, moveEvent);
       if (!point) return;
       range = Math.max(6, Math.min(80, Math.hypot(point.x - getGunX(marker), point.y - getGunY(marker))));
-      path.setAttribute("d", buildGunSectorPath({ ...marker, range }));
+      updateGunSectorPath(canvas, markerId, { ...marker, range });
     };
     const finish = (upEvent) => {
       if (upEvent.pointerId !== event.pointerId) return;
-      path.removeEventListener("pointermove", update);
-      path.removeEventListener("pointerup", finish);
-      path.removeEventListener("pointercancel", cancel);
-      path.releasePointerCapture?.(event.pointerId);
+      hitPath.removeEventListener("pointermove", update);
+      hitPath.removeEventListener("pointerup", finish);
+      hitPath.removeEventListener("pointercancel", cancel);
+      hitPath.releasePointerCapture?.(event.pointerId);
       actions.updateMapMarker(markerKey, markerId, { range });
     };
     const cancel = (cancelEvent) => {
       if (cancelEvent.pointerId !== event.pointerId) return;
-      path.removeEventListener("pointermove", update);
-      path.removeEventListener("pointerup", finish);
-      path.removeEventListener("pointercancel", cancel);
-      path.releasePointerCapture?.(event.pointerId);
+      hitPath.removeEventListener("pointermove", update);
+      hitPath.removeEventListener("pointerup", finish);
+      hitPath.removeEventListener("pointercancel", cancel);
+      hitPath.releasePointerCapture?.(event.pointerId);
     };
-    path.addEventListener("pointermove", update);
-    path.addEventListener("pointerup", finish);
-    path.addEventListener("pointercancel", cancel);
+    hitPath.addEventListener("pointermove", update);
+    hitPath.addEventListener("pointerup", finish);
+    hitPath.addEventListener("pointercancel", cancel);
   });
-  svg.append(path);
+  svg.append(hitPath, linePath);
   return svg;
 }
 

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "spl3gear-pwa-v44";
+const CACHE_VERSION = "spl3gear-pwa-v45";
 const APP_SHELL = [
   "./",
   "./index.html",
