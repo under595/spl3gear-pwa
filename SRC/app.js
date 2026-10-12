@@ -42,7 +42,6 @@
     selectMapStage(slotIndex, stage) { updateMapSlot(state, slotIndex, { stage: stage || "", variant: "", waterVisible: true }); redraw(); },
     selectMapVariant(slotIndex, variant) { updateMapSlot(state, slotIndex, { variant: variant || "" }); redraw(); },
     setMapWaterVisible(slotIndex, value) { updateMapSlot(state, slotIndex, { waterVisible: Boolean(value) }); redraw(); },
-    setMapRangeMode(slotIndex, mode) { updateMapSlot(state, slotIndex, { rangeMode: mode === "without" ? "without" : "with" }); redraw(); },
     toggleFavoriteMap(rule, stage) { toggleFavoriteMap(state, rule, stage); redraw(); },
     refreshApp() { refreshApp(); },
 
@@ -247,14 +246,13 @@
   }
 
   function normalizeMapSlots(source) {
-    const fallback = { stage: "リュウグウターミナル", variant: "", rangeMode: "with", waterVisible: true };
+    const fallback = { stage: "リュウグウターミナル", variant: "", waterVisible: true };
     const sourceSlots = Array.isArray(source.mapSlots) ? source.mapSlots : [
-      { stage: source.mapStage, variant: "", rangeMode: source.mapRangeMode },
+      { stage: source.mapStage, variant: "" },
     ];
     const slots = sourceSlots.slice(0, 2).map((slot) => ({
       stage: typeof slot?.stage === "string" && slot.stage ? slot.stage : fallback.stage,
       variant: typeof slot?.variant === "string" ? slot.variant : "",
-      rangeMode: slot?.rangeMode === "without" ? "without" : "with",
       waterVisible: typeof slot?.waterVisible === "boolean" ? slot.waterVisible : true,
     }));
     while (slots.length < 2) slots.push({ ...fallback });

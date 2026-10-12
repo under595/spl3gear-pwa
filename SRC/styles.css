@@ -191,26 +191,6 @@ button { cursor: pointer; }
   background: #fff;
 }
 
-.map-range-switch {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.map-range-button {
-  min-height: 34px;
-  border: 1px solid #171717;
-  border-radius: 4px;
-  color: #fff;
-  background: #2b2b2b;
-  font-weight: 800;
-}
-
-.map-range-button.is-active {
-  color: #101010;
-  background: var(--accent);
-}
-
 .map-viewer {
   min-height: 280px;
   display: grid;
@@ -1164,8 +1144,7 @@ button { cursor: pointer; }
   .favorite-weapon-toggle { width: 38px; }
   .map-bar { grid-template-columns: 76px minmax(0, 1fr) 38px; gap: 4px; padding: 5px; }
   .map-rule-select,
-  .map-stage-select,
-  .map-range-button { height: 38px; }
+  .map-stage-select { height: 38px; }
   .analyzer-body { grid-template-columns: 1fr; align-items: stretch; }
   .analyzer-header { grid-template-columns: auto minmax(0, 1fr) auto; }
   .control-line { min-height: 32px; }

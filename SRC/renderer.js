@@ -6,7 +6,7 @@
   const { buildEfficiencyTest, buildResults, canPlacePower, classifyPowers, getAllowedPart, getPowerMeta } = window.SPL3.calculations;
   const PINNED_RESULT_NAMES = new Set(["メイン", "サブ", "スペシャル必要P", "スペシャル性能"]);
   const PINNED_RESULT_ORDER = ["メイン", "サブ", "スペシャル必要P", "スペシャル性能"];
-  const APP_VERSION = "Ver1.28";
+  const APP_VERSION = "Ver1.29";
 
 function render(root, state, actions) {
   const results = buildResults(state.slots, state.weaponName, {
@@ -353,8 +353,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   const waterVisible = typeof slot.waterVisible === "boolean" ? slot.waterVisible : !isWaterlessMapVariant(requestedVariant);
   const variant = group ? resolveMapVariant(group, selectedState, waterVisible) : "";
   const current = group && (group.variants.find((item) => item.variant === variant) || group.variants[0]);
-  const rangeMode = slot.rangeMode === "without" ? "without" : "with";
-  const imagePath = current && (current.images[rangeMode] || current.images.with || current.images.without);
+  const imagePath = current && current.images.with;
   const favoriteKey = `${rule}|${stage}`;
   const favoriteSet = new Set(state.favoriteMaps || []);
 
@@ -399,22 +398,11 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
   star.addEventListener("click", () => actions.toggleFavoriteMap(rule, stage));
   controls.append(ruleSelect, stageSelect, star);
 
-  const rangeSwitch = createElement("div", "map-range-switch", { role: "group", "aria-label": `ブキ射程表の表示 ${slotIndex + 1}` });
-  for (const [mode, label] of [["with", "射程表あり"], ["without", "射程表なし"]]) {
-    const button = createElement("button", `map-range-button ${rangeMode === mode ? "is-active" : ""}`.trim(), {
-      type: "button",
-      text: label,
-      "aria-pressed": String(rangeMode === mode),
-    });
-    button.addEventListener("click", () => actions.setMapRangeMode(slotIndex, mode));
-    rangeSwitch.append(button);
-  }
-
   const viewer = createElement("div", "map-viewer");
   if (imagePath) {
     const image = createElement("img", "map-image", {
       src: encodeURI(imagePath),
-      alt: `${ruleLabel(rule)} ${stage}${variant ? ` ${variant}` : ""} ${rangeMode === "with" ? "ブキ射程表あり" : "ブキ射程表なし"}`,
+      alt: `${ruleLabel(rule)} ${stage}${variant ? ` ${variant}` : ""} ブキ射程表あり`,
       loading: "eager",
     });
     viewer.append(image);
@@ -422,7 +410,7 @@ function renderMapSet(state, actions, rule, groups, slotIndex) {
     viewer.append(createElement("div", "map-empty", { text: "この条件のマップ画像がありません" }));
   }
 
-  section.append(controls, rangeSwitch, viewer);
+  section.append(controls, viewer);
   if (group) section.append(renderVariantChoices(group, selectedState, waterVisible, slotIndex, actions));
   return section;
 }
@@ -575,7 +563,7 @@ function normalizeMapSlotState(slot = {}) {
   return {
     stage: typeof slot.stage === "string" && slot.stage ? slot.stage : "リュウグウターミナル",
     variant: typeof slot.variant === "string" ? slot.variant : "",
-    rangeMode: slot.rangeMode === "without" ? "without" : "with",
+    waterVisible: typeof slot.waterVisible === "boolean" ? slot.waterVisible : true,
   };
 }
 
